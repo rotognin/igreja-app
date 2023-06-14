@@ -1,0 +1,268 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-02-03 13:12-0300\n"
+"PO-Revision-Date: 2023-02-03 13:40-0300\n"
+"Last-Translator: Funcoes <rodrigo@Funcoes.com.br>\n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+
+#: public/cadastro/cadCliente.php:10
+msgid "Arquivo não encontrado: "
+msgstr "File not found:"
+
+#: public/cadastro/cadCliente/form.php:16
+#: public/cadastro/cadCliente/formedit.php:16
+#: public/cadastro/cadCliente/salvar.php:47
+msgid "Cliente não encontrado"
+msgstr "Customer not found"
+
+#: public/cadastro/cadCliente/form.php:21
+#: public/cadastro/cadCliente/formedit.php:21
+msgid "Cadastro de Cliente"
+msgstr "Customer Registration"
+
+#: public/cadastro/cadCliente/form.php:24
+#: public/cadastro/cadCliente/formedit.php:24
+#: public/cadastro/cadCliente/lista.php:87
+msgid "Editar Cliente"
+msgstr "Edit Customer"
+
+#: public/cadastro/cadCliente/form.php:24
+#: public/cadastro/cadCliente/lista.php:11
+msgid "Novo Cliente"
+msgstr "New customer"
+
+#: public/cadastro/cadCliente/form.php:37
+#: public/cadastro/cadCliente/formedit.php:37
+#: public/cadastro/cadCliente/lista.php:33
+#: public/cadastro/cadCliente/lista.php:78
+msgid "Código Provisório?"
+msgstr "Provisional code?"
+
+#: public/cadastro/cadCliente/form.php:45
+#: public/cadastro/cadCliente/formedit.php:45
+msgid "Código do Cliente"
+msgstr "Customer Code"
+
+#: public/cadastro/cadCliente/form.php:47
+#: public/cadastro/cadCliente/formedit.php:47
+#: public/cadastro/cadCliente/lista.php:22
+#: public/cadastro/cadCliente/lista.php:79
+msgid "Sigla"
+msgstr "Acronym"
+
+#: public/cadastro/cadCliente/form.php:48
+#: public/cadastro/cadCliente/formedit.php:48
+#: public/cadastro/cadCliente/lista.php:21
+#: public/cadastro/cadCliente/lista.php:80
+msgid "Nome"
+msgstr "Name"
+
+#: public/cadastro/cadCliente/form.php:49
+#: public/cadastro/cadCliente/lojaform.php:41
+#: public/cadastro/cadCliente/lojalista.php:35
+msgid "Contato"
+msgstr "Contact"
+
+#: public/cadastro/cadCliente/form.php:50
+#: public/cadastro/cadCliente/lojaform.php:42
+msgid "Email de Contato"
+msgstr "Contact E-mail"
+
+#: public/cadastro/cadCliente/form.php:52
+#: public/cadastro/cadCliente/lojaform.php:39
+msgid "Código da Loja"
+msgstr "Store Code"
+
+#: public/cadastro/cadCliente/form.php:53
+msgid "Descrição da Loja"
+msgstr "Store Description"
+
+#: public/cadastro/cadCliente/form.php:54
+#: public/cadastro/cadCliente/lojaform.php:43
+msgid "PIS/COFINS (%)"
+msgstr "PIS/COFINS (%)"
+
+#: public/cadastro/cadCliente/form.php:55
+#: public/cadastro/cadCliente/lojaform.php:44
+msgid "ICMS (%)"
+msgstr "ICMS (%)"
+
+#: public/cadastro/cadCliente/form.php:59
+#: public/cadastro/cadCliente/formedit.php:52
+#: public/cadastro/cadCliente/lojaform.php:48
+msgid "Salvar"
+msgstr "Save"
+
+#: public/cadastro/cadCliente/form.php:62
+#: public/cadastro/cadCliente/formedit.php:55
+msgid "Informe o Código do Cliente"
+msgstr "Enter the customer´s code"
+
+#: public/cadastro/cadCliente/form.php:63
+#: public/cadastro/cadCliente/formedit.php:56
+msgid "Informe o Nome do Cliente"
+msgstr "Enter the customer´s name"
+
+#: public/cadastro/cadCliente/form.php:64
+#: public/cadastro/cadCliente/formedit.php:57
+msgid "Informe a Sigla do Cliente"
+msgstr "Enter the customer´s acronym"
+
+#: public/cadastro/cadCliente/form.php:65
+msgid "Informe o código da loja"
+msgstr "Enter the store code"
+
+#: public/cadastro/cadCliente/form.php:66
+msgid "Informe a descrição da Loja"
+msgstr "Enter the store description"
+
+#: public/cadastro/cadCliente/form.php:67
+#: public/cadastro/cadCliente/lojaform.php:55
+msgid "Informe o campo PIS/COFINS"
+msgstr "Enter the PIS/COFINS field"
+
+#: public/cadastro/cadCliente/form.php:68
+#: public/cadastro/cadCliente/lojaform.php:56
+msgid "Informe o campo ICMS"
+msgstr "Enter the ICMS field"
+
+#: public/cadastro/cadCliente/lista.php:11
+msgid "Cadastro de Clientes"
+msgstr "Customer Registration"
+
+#: public/cadastro/cadCliente/lista.php:20
+#: public/cadastro/cadCliente/lista.php:77
+#: public/cadastro/cadCliente/lojalista.php:31
+msgid "Código"
+msgstr "Code"
+
+#: public/cadastro/cadCliente/lista.php:25
+msgid "Todos"
+msgstr "All"
+
+#: public/cadastro/cadCliente/lista.php:26
+msgid "Sim"
+msgstr "Yes"
+
+#: public/cadastro/cadCliente/lista.php:27
+msgid "Não"
+msgstr "No"
+
+#: public/cadastro/cadCliente/lista.php:71
+msgid "Nenhum Cliente encontrado"
+msgstr "Customer not found"
+
+#: public/cadastro/cadCliente/lista.php:88
+msgid "Lojas do Cliente"
+msgstr "Customer stores"
+
+#: public/cadastro/cadCliente/lojaform.php:21
+#: public/cadastro/cadCliente/lojasalvar.php:49
+msgid "Loja não encontrada"
+msgstr "Store not found"
+
+#: public/cadastro/cadCliente/lojaform.php:26
+msgid "Cadastro de Loja"
+msgstr "Store Registration"
+
+#: public/cadastro/cadCliente/lojaform.php:29
+#: public/cadastro/cadCliente/lojalista.php:43
+msgid "Editar Loja"
+msgstr "Edit store"
+
+#: public/cadastro/cadCliente/lojaform.php:29
+#: public/cadastro/cadCliente/lojalista.php:16
+msgid "Nova Loja"
+msgstr "New store"
+
+#: public/cadastro/cadCliente/lojaform.php:40
+#: public/cadastro/cadCliente/lojalista.php:32
+msgid "Descrição"
+msgstr "Description"
+
+#: public/cadastro/cadCliente/lojaform.php:51
+msgid "Informe o Código da Loja"
+msgstr "Enter the store code"
+
+#: public/cadastro/cadCliente/lojaform.php:52
+msgid "Informe a Descrição da Loja"
+msgstr "Enter the store description"
+
+#: public/cadastro/cadCliente/lojaform.php:53
+msgid "Informe o Contato"
+msgstr "Fill the contact field"
+
+#: public/cadastro/cadCliente/lojaform.php:54
+msgid "Informe o E-mail de contato"
+msgstr "Fill the contact´s e-mail"
+
+#: public/cadastro/cadCliente/lojalista.php:15
+msgid "Cadastro de Lojas"
+msgstr "Store Registration"
+
+#: public/cadastro/cadCliente/lojalista.php:19
+msgid "Nenhuma Loja encontrada para esse Cliente"
+msgstr "No stores found for this customer"
+
+#: public/cadastro/cadCliente/lojalista.php:33
+msgid "PIS/COFINS"
+msgstr "PIS/COFINS"
+
+#: public/cadastro/cadCliente/lojalista.php:34
+msgid "ICMS"
+msgstr "ICMS"
+
+#: public/cadastro/cadCliente/lojalista.php:36
+msgid "E-mail"
+msgstr "E-mail"
+
+#: public/cadastro/cadCliente/lojasalvar.php:18
+msgid "Loja já cadastrada"
+msgstr "Store already registered"
+
+#: public/cadastro/cadCliente/lojasalvar.php:31
+msgid "Já existe uma Loja com o código informado"
+msgstr "There is already a store with the given code"
+
+#: public/cadastro/cadCliente/lojasalvar.php:45
+msgid "Loja cadastrada com sucesso"
+msgstr "Store successfully registered"
+
+#: public/cadastro/cadCliente/lojasalvar.php:60
+#: public/cadastro/cadCliente/salvar.php:56
+msgid "Cliente atualizado com sucesso"
+msgstr "Customer updated successfully"
+
+#: public/cadastro/cadCliente/salvar.php:13
+msgid "Cliente já cadastrado"
+msgstr "Customer already registered"
+
+#: public/cadastro/cadCliente/salvar.php:43
+msgid "Cliente e Loja cadastrados com sucesso"
+msgstr "Customer and Store successfully registered"
+
+#: public/cadastro/header.php:16
+msgid "Programa inativo"
+msgstr "Inactive program"
+
+#: public/cadastro/header.php:19
+msgid "Você não tem permissão para acessar esta página"
+msgstr "You do not have permission to access this page"
+
+#: public/dashboard/index.php:8
+msgid "Bem vindo ao Dashboard"
+msgstr "Welcome to the Dashboard"
+
+#: public/sgc/cadUsuario.php:20
+msgid "Cadastro de usuários"
+msgstr "User Registration"

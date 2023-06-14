@@ -1,0 +1,22 @@
+{
+    "name": "rodrigo-tognin/app-igreja",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Funcoes\\": "funcoes/",
+            "View\\": "public/",
+            "View\\Cadastro\\": "public/cadastro/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rodrigo Tognin",
+            "email": "contato@rodrigotognin.com.br"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.5",
+        "phpoffice/phpspreadsheet": "^1.28"
+    }
+}

@@ -1,0 +1,10 @@
+/vendor/
+config.php
+/teste/
+.vscode/
+/docs/
+public/uploads/
+/upload
+/temp
+/public/teste/
+/public/temp/
