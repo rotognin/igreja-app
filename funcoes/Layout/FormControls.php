@@ -340,16 +340,18 @@ class FormControls
         $id = $attrs['id'] ?? $name;
         $class = $attrs['class'] ?? 'form-control';
         $data = $attrs['data'] ?? [];
+        $div_class = $attrs['div_class'] ?? '';
 
         unset($attrs['id']);
         unset($attrs['class']);
         unset($attrs['data']);
+        unset($attrs['div_class']);
 
         $attrs = HTML::attrs($attrs);
         $data = HTML::dataAttrs($data);
 
         return <<<HTML
-        <div class="form-group">
+        <div class="form-group $div_class">
             <label for="$id">$label</label>
             <input type="text" name="$name" value="$value" id="$id" class="$class" $attrs $data/>
         </div>

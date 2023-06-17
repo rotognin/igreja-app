@@ -71,7 +71,7 @@ class Lista extends ViewHelper
         $familias = $this->buscarFamilias();
         $filtro_familias = FC::select2(_('Família'), 'fam_nome', $familias, $this->request->get('fam_nome', '0'));
 
-        $arraySituacao = array_merge(['0' => 'Todas'], $this->visitasDAO->getSituacao());
+        $arraySituacao = array_merge(['0' => 'Todas'], $this->visitasDAO->getSituacoes());
         $filtro_situacao = FC::select(_('Situação da Visita'), 'vis_status', $arraySituacao, $this->request->get('vis_status', '0'));
 
         $filtro_periodo = FC::switch(_('Filtrar pelo período'), 'vis_periodo', '1', $this->request->get('vis_periodo', '0') == '1', ['div_class' => 'm-0']);
@@ -91,10 +91,10 @@ class Lista extends ViewHelper
     {
         $this->script = <<<HTML
             <script>
-                function excluirVisita(vis_id){
-                    confirm('Deseja realmente excluir esta visita?').then(result => {
+                function cancelarVisita(vis_id){
+                    confirm('Deseja realmente cancelar esta visita?').then(result => {
                         if (result.isConfirmed) {
-                            window.location.href = '?posicao=excluir&vis_id=' + vis_id;
+                            window.location.href = '?posicao=cancelar&vis_id=' + vis_id;
                         }
                     });
                 }

@@ -6,6 +6,7 @@ use App\MOVIMENTACOES\DAO\Visitas;
 use Funcoes\Layout\Datatable;
 use Funcoes\Lib\Datatables\Definitions;
 use Funcoes\Layout\Layout as L;
+use Funcoes\Helpers\Format;
 
 class DatatableVisitas extends Definitions
 {
@@ -111,15 +112,16 @@ class DatatableVisitas extends Definitions
         if ($total > 0) {
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
-                    L::linkButton('', "?posicao=form&vis_id={$reg['vis_id']}", _('Editar Visita'), 'fas fa-edit', 'outline-secondary', 'sm'),
-                    L::button('', "excluirVisita({$reg['vis_id']})", _('Excluir Visita'), 'fas fa-trash', 'outline-danger', 'sm')
+                    L::linkButton('', "?posicao=form&vis_id={$reg['vis_id']}", _('Editar Visita'), 'fas fa-edit', 'outline-primary', 'sm'),
+                    L::linkButton('', "?posicao=confirmar&vis_id={$reg['vis_id']}", _('Confirmar Visita'), 'fas fa-check', 'outline-primary', 'sm'),
+                    L::button('', "cancelarVisita({$reg['vis_id']})", _('Cancelar Visita'), 'fas fa-trash', 'outline-danger', 'sm')
                 ]);
 
                 $data[] = array(
                     $reg['vis_id'],
                     $reg['vis_titulo'],
                     $reg['fam_nome'],
-                    $reg['vis_data'] . ' ' . $reg['vis_hora'],
+                    Format::date($reg['vis_data']) . ' ' . $reg['vis_hora'],
                     $reg['vis_status'],
                     $buttons
                 );

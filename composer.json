@@ -17,6 +17,7 @@
     ],
     "require": {
         "phpmailer/phpmailer": "^6.5",
-        "phpoffice/phpspreadsheet": "^1.28"
+        "phpoffice/phpspreadsheet": "^1.28",
+        "robmorgan/phinx": "^0.13.4"
     }
 }

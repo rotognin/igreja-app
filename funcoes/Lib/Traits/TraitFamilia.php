@@ -8,14 +8,14 @@ trait TraitFamilia
 {
     private Familias $familiasDAO;
 
-    private function getDAOs()
+    private function getDAOFamilias()
     {
         $this->familiasDAO = new Familias();
     }
 
     public function buscarFamilias()
     {
-        $this->getDAOs();
+        $this->getDAOFamilias();
 
         $array = $this->familiasDAO->getArray();
         $familias = array();

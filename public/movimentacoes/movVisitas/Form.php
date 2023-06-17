@@ -8,12 +8,14 @@ use Funcoes\Layout\FormControls as FC;
 use App\CADASTRO\DAO\Familias;
 use App\MOVIMENTACOES\DAO\Visitas;
 use Funcoes\Lib\ViewHelper;
-use Funcoes\Lib\Constantes;
+use Funcoes\Helpers\Format;
 use Funcoes\Lib\Traits\TraitFamilia;
+use Funcoes\Lib\Traits\TraitMembros;
+use Funcoes\Lib\Traits\TraitPessoas;
 
 class Form extends ViewHelper
 {
-    use TraitFamilia;
+    use TraitFamilia, TraitMembros, TraitPessoas;
 
     private Visitas $visitasDAO;
     private Familias $familiasDAO;
@@ -116,16 +118,28 @@ class Form extends ViewHelper
         $familias = $this->buscarFamilias();
         $campo_familias = FC::select2(_('Família'), 'vis_familia_id', $familias, $this->aVisita['vis_familia_id'] ?? '0', ['div_class' => 'col-md-4']);
 
-        $campo_data = FC::date('Data', 'vis_data', $this->aVisita['vis_data'] ?? '');
-        $campo_hora = FC::input('Hora', 'vis_hora', $this->aVisita['vis_hora'] ?? '', ['type' => 'time']);
+        $campo_data = FC::date('Data', 'vis_data', Format::date($this->aVisita['vis_data'] ?? ''), ['div_class' => 'col-md-2']);
+        $campo_hora = FC::input('Hora', 'vis_hora', $this->aVisita['vis_hora'] ?? '', ['type' => 'time', 'div_class' => 'col-md-2']);
 
-        // Campo para escolher quem vai na visita
-        // Membros e Pessoas
+        $membros = $this->buscarMembros();
+        $campo_membros_visitantes = FC::select2(_('Membros Visitanes'), 'vis_membros[]', $membros, '', [
+            'multiple' => 'multiple',
+            'id' => 'vis_membros_select',
+            'div_class' => 'col-md-6'
+        ]);
+
+        $pessoas = $this->buscarPessoas();
+        $campo_pessoas_visitantes = FC::select2(_('Pessoas Visitantes'), 'vis_pessoas[]', $pessoas, '', [
+            'multiple' => 'multiple',
+            'id' => 'vis_pessoas_select',
+            'div_class' => 'col-md-6'
+        ]);
 
         $this->form->setFields([
             ['<div class="row">' . $campo_titulo . $campo_familias . '</div>'],
             [$campo_descricao],
-            [$campo_data, $campo_hora],
+            ['<div class="row">' . $campo_data . $campo_hora . '</div>'],
+            ['<div class="row">' . $campo_membros_visitantes . $campo_pessoas_visitantes . '</div>']
         ]);
 
         $this->form->setActions(L::submit(_('Salvar')));

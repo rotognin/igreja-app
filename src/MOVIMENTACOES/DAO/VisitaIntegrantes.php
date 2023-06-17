@@ -4,29 +4,14 @@ namespace App\MOVIMENTACOES\DAO;
 
 use Funcoes\Lib\DAO;
 
-class Visitas extends DAO
+class VisitaIntegrantes extends DAO
 {
     private array $colunas = array(
-        'vis_id',
-        'vis_data',
-        'vis_hora',
-        'vis_observacao',
-        'vis_data_inc',
-        'vis_usu_inc',
-        'vis_data_alt',
-        'vis_usu_alt',
-        'vis_data_exc',
-        'vis_usu_exc',
-        'vis_descricao',
-        'vis_status',
-        'vis_familia_id',
-        'vis_titulo'
-    );
-
-    private array $situacoes = array(
-        'A Realizar' => 'A Realizar',
-        'Realizada'  => 'Realizada',
-        'Cancelada'  => 'Cancelada'
+        'vin_id',
+        'vin_visita_id',
+        'vin_membro_id',
+        'vin_pessoa_id',
+        'vin_tipo'
     );
 
     public function __construct()
@@ -35,22 +20,17 @@ class Visitas extends DAO
         $this->default = $this->dbManager->get('default');
     }
 
-    public function getSituacoes(): array
+    public function get($vin_id): array
     {
-        return $this->situacoes;
-    }
-
-    public function get($vis_id): array
-    {
-        $visitas = $this->getArray(["AND vis_id = ?", [$vis_id]]);
+        $visitas = $this->getArray(["AND vin_id = ?", [$vin_id]]);
         return $visitas[0] ?? [];
     }
 
     public function total($where = [])
     {
-        $sql = "SELECT COUNT(vis_id) AS total 
-                FROM {$this->table('igreja_db', 'visitas')} 
-                WHERE vis_usu_exc IS NULL";
+        $sql = "SELECT COUNT(vin_id) AS total 
+                FROM {$this->table('igreja_db', 'visita_integrantes')} 
+                WHERE 1=1 ";
 
         if ($where) {
             $sql .= "$where[0]";
@@ -67,10 +47,11 @@ class Visitas extends DAO
         $campos = implode(', ', $this->colunas);
 
         $sql = "SELECT 
-            {$campos}, f.fam_nome
-        FROM {$this->table('igreja_db', 'visitas')} 
-        LEFT JOIN {$this->table('igreja_db', 'familias')} f ON f.fam_id = vis_familia_id 
-        WHERE vis_usu_exc IS NULL 
+            {$campos}, m.mem_nome, p.pes_nome 
+        FROM {$this->table('igreja_db', 'visita_integrantes')} 
+        LEFT JOIN {$this->table('igreja_db', 'membros')} m ON m.mem_id = vin_membro_id 
+        LEFT JOIN {$this->table('igreja_db', 'pessaos')} p ON p.pes_id = vin_pessoa_id 
+        WHERE 1=1 
         ";
 
         if ($where) {
@@ -97,20 +78,28 @@ class Visitas extends DAO
 
     public function insert(array $record): int
     {
-        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'visitas'), $record);
+        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'visita_integrantes'), $record);
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
         return $this->default->lastInsertId();
     }
 
-    public function update(string $vis_id, array $record): int
+    public function update(string $vin_id, array $record): int
     {
-        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'visitas'), $record);
-        $sql .= " WHERE vis_id = ?";
-        $args[] = $vis_id;
+        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'visita_integrantes'), $record);
+        $sql .= " WHERE vin_id = ?";
+        $args[] = $vin_id;
 
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
+        return $stmt->rowCount();
+    }
+
+    public function delete(int $vis_id)
+    {
+        $sql = "DELETE FROM {$this->table('igreja_db', 'visita_integrantes')} WHERE vin_visita_id = ?";
+        $stmt = $this->default->prepare($sql);
+        $stmt->execute([$vis_id]);
         return $stmt->rowCount();
     }
 }
