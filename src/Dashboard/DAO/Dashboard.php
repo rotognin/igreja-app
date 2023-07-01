@@ -67,7 +67,7 @@ class Dashboard extends DAO
 
         $html = '';
         $html = '<div class="card ml-3">';
-        $html .= '<h5 class="card-header text-white bg-secondary">Programas mais acessados</h5>';
+        $html .= '<h5 class="card-header text-white bg-success">Programas mais acessados</h5>';
         $html .= '<div class="card-body">';
 
         if ($array) {
@@ -123,7 +123,7 @@ class Dashboard extends DAO
 
         $html = '';
         $html = '<div class="card mr-3">';
-        $html .= '<h5 class="card-header text-white bg-secondary">Acessados recentemente</h5>';
+        $html .= '<h5 class="card-header text-white bg-success">Acessados recentemente</h5>';
         $html .= '<div class="card-body">';
 
         if ($array) {

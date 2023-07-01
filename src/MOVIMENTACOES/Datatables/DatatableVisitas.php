@@ -111,10 +111,25 @@ class DatatableVisitas extends Definitions
 
         if ($total > 0) {
             foreach ($registros as $reg) {
+                $disabled = '';
+
+                $buttonEditar = 'outline-primary';
+                $buttonRealizar = 'outline-primary';
+                $buttonCancelar = 'outline-secondary';
+                $buttonExcluir = 'outline-danger';
+
+                if (in_array($reg['vis_status'], ['Cancelada', 'Excluída', 'Realizada'])) {
+                    $disabled = ' disabled aria-disabled="true"';
+                    $buttonEditar = 'outline-secondary';
+                    $buttonRealizar = 'outline-secondary';
+                    $buttonExcluir = 'outline-secondary';
+                }
+
                 $buttons = L::buttonGroup([
-                    L::linkButton('', "?posicao=form&vis_id={$reg['vis_id']}", _('Editar Visita'), 'fas fa-edit', 'outline-primary', 'sm'),
-                    L::linkButton('', "?posicao=confirmar&vis_id={$reg['vis_id']}", _('Confirmar Visita'), 'fas fa-check', 'outline-primary', 'sm'),
-                    L::button('', "cancelarVisita({$reg['vis_id']})", _('Cancelar Visita'), 'fas fa-trash', 'outline-danger', 'sm')
+                    L::button('', "editarVisita({$reg['vis_id']})", _('Editar Visita'), 'fas fa-edit', $buttonEditar, 'sm', $disabled),
+                    L::button('', "realizarVisita({$reg['vis_id']})", _('Realizar Visita'), 'fas fa-check', $buttonRealizar, 'sm', $disabled),
+                    L::button('', "cancelarVisita({$reg['vis_id']})", _('Cancelar Visita'), 'fas fa-comment-slash', $buttonCancelar, 'sm', $disabled),
+                    L::button('', "excluirVisita({$reg['vis_id']})", _('Excluir Visita'), 'fas fa-trash', $buttonExcluir, 'sm', $disabled)
                 ]);
 
                 $data[] = array(

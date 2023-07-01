@@ -50,7 +50,7 @@ class VisitaIntegrantes extends DAO
             {$campos}, m.mem_nome, p.pes_nome 
         FROM {$this->table('igreja_db', 'visita_integrantes')} 
         LEFT JOIN {$this->table('igreja_db', 'membros')} m ON m.mem_id = vin_membro_id 
-        LEFT JOIN {$this->table('igreja_db', 'pessaos')} p ON p.pes_id = vin_pessoa_id 
+        LEFT JOIN {$this->table('igreja_db', 'pessoas')} p ON p.pes_id = vin_pessoa_id 
         WHERE 1=1 
         ";
 

@@ -52,14 +52,14 @@ class Layout
             HTML;
     }
 
-    public static function linkButton($text, $href, $title = "", $icon = '', $type = 'default', $size = 'md', $addClass = '', $events = '')
+    public static function linkButton($text, $href, $title = "", $icon = '', $type = 'default', $size = 'md', $addClass = '', $events = '', $attrs = '')
     {
         if (!empty($icon)) {
             $icon = "<i class=\"$icon\"></i>";
         }
         return
             <<<HTML
-            <a class="btn btn-$type btn-$size $addClass" href="$href" title="$title" $events>
+            <a class="btn btn-$type btn-$size $addClass" href="$href" title="$title" $events $attrs>
                 $icon
                 $text 
             </a>

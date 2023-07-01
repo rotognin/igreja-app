@@ -12,10 +12,11 @@ use Funcoes\Helpers\Format;
 use Funcoes\Lib\Traits\TraitFamilia;
 use Funcoes\Lib\Traits\TraitMembros;
 use Funcoes\Lib\Traits\TraitPessoas;
+use Funcoes\Lib\Traits\TraitVisitaIntegrantes;
 
 class Form extends ViewHelper
 {
-    use TraitFamilia, TraitMembros, TraitPessoas;
+    use TraitFamilia, TraitMembros, TraitPessoas, TraitVisitaIntegrantes;
 
     private Visitas $visitasDAO;
     private Familias $familiasDAO;
@@ -175,6 +176,43 @@ class Form extends ViewHelper
                 });
             </script>
         HTML;
+
+        if (!$this->novo) {
+            $this->montarScriptCarregarDados();
+        }
+    }
+
+    private function montarScriptCarregarDados()
+    {
+        $integrantes = $this->obterVisitantes($this->aVisita['vis_id']);
+
+        if (empty($integrantes)) {
+            return false;
+        }
+
+        $membros = '';
+        $pessoas = '';
+
+        foreach ($integrantes as $integrante) {
+            if ($integrante['vin_tipo'] == 'Membro') {
+                $membros .= $integrante['vin_membro_id'] . ', ';
+            } else {
+                $pessoas .= $integrante['vin_pessoa_id'] . ', ';
+            }
+        }
+
+        $addScript = "$('#vis_membros_select').val([{$membros}]).trigger('change');";
+        $addScript .= "$('#vis_pessoas_select').val([{$pessoas}]).trigger('change');";
+
+        $script = <<<HTML
+            <script>
+                $(function(){
+                    {$addScript}
+                });
+            </script>
+        HTML;
+
+        $this->script .= $script;
     }
 
     private function saidaPagina()

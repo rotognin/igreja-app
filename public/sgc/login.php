@@ -13,12 +13,12 @@ if ($posicao == 'form') {
     echo $response->loginPage(
         <<<HTML
         <div class="login-box">
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-success">
                 <div class="card-header text-center">
-                    <!--b class="h1"-->
-                        <img class="brand-image" src="/assets/img/logo.png" alt="Logo">
-                        <!--{$config->get('app.title', 'Framinco')}-->
-                    <!--/b-->
+                    <b class="h1">
+                        <p>{$config->get('app.title', 'Igreja Batista')}</p>
+                        <img class="brand-image" src="/assets/img/logo-login.png" alt="Logo">
+                    </b>
                 </div>
                 <div class="card-body">
                     <p class="login-box-msg">Faça login para iniciar sua sessão</p>
@@ -41,10 +41,10 @@ if ($posicao == 'form') {
                         </div>
                         <div class="row">
                             <div class="col-8 d-flex align-items-center">
-                                <a href="forgot-password.html">Esqueci minha senha</a>
+                                <!--a href="forgot-password.html">Esqueci minha senha</a-->
                             </div>
                             <div class="col-4">
-                                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                                <button type="submit" class="btn btn-success btn-block">Entrar</button>
                             </div>
                         </div>
                     </form>

@@ -153,8 +153,8 @@ class Response
                     </ul>
                 </nav>
                 <aside class="main-sidebar sidebar-dark-primary elevation-4 sidebar-no-expand">
-                    <a class="brand-link text-center" href="/" style="background-color: white; padding:0px; border-bottom: solid 3px #00427c">
-                        <img class="rounded mx-auto d-block" src="/assets/img/logo-interno.png" alt="Logo Interno">
+                    <a class="brand-link text-center" href="/" style="background-color: white; padding:0px; border-bottom: solid 3px #28A745">
+                        <img class="rounded mx-auto d-block" src="/assets/img/igreja.png" alt="Logo Interno">
                     </a>
                     <div class="sidebar">
                         <div class="form-inline mt-2">

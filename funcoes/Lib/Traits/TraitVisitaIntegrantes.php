@@ -49,4 +49,15 @@ trait TraitVisitaIntegrantes
             ]);
         }
     }
+
+    public function obterVisitantes(int $vis_id): array
+    {
+        $this->getDAOVisitaIntegrantes();
+
+        $where = array('');
+        $where[0] = ' AND vin_visita_id = ?';
+        $where[1][] = $vis_id;
+
+        return $this->visitaIntegrantesDAO->getArray($where);
+    }
 }

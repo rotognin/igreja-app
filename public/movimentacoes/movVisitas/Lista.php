@@ -91,10 +91,26 @@ class Lista extends ViewHelper
     {
         $this->script = <<<HTML
             <script>
+                function editarVisita(vis_id){
+                    window.location.href = '?posicao=form&vis_id=' + vis_id;
+                }
+
+                function realizarVisita(vis_id){
+                    window.location.href = '?posicao=realizar&vis_id=' + vis_id;
+                }
+
                 function cancelarVisita(vis_id){
                     confirm('Deseja realmente cancelar esta visita?').then(result => {
                         if (result.isConfirmed) {
                             window.location.href = '?posicao=cancelar&vis_id=' + vis_id;
+                        }
+                    });
+                }
+
+                function excluirVisita(vis_id){
+                    confirm('Deseja realmente excluir esta visita?').then(result => {
+                        if (result.isConfirmed) {
+                            window.location.href = '?posicao=excluir&vis_id=' + vis_id;
                         }
                     });
                 }
