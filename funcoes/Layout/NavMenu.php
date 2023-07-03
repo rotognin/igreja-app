@@ -19,7 +19,7 @@ class NavMenu
         if (!empty($programas)) {
             $tree = \Funcoes\Helpers\Tree::buildTree($programas, 'prg_codigo', 'prg_codigo_pai');
             $html = <<<HTML
-            <nav class="mt-2">
+            <nav class="mt-2" style="font-size: 13px">
                 <ul class="nav nav-pills nav-sidebar nav-compact flex-column" data-widget="treeview" role="menu" data-accordion="false">
             HTML;
 

@@ -25,7 +25,7 @@ class EstablishmentSelector
 
         $padrao = '<i>Sem empresa</i>';
         if ($empresa = $session->get('establishment', [])) {
-            $padrao = "{$empresa['emp_codigo']} - {$empresa['emp_nome']}";
+            $padrao = "{$empresa['emp_codigo']} - {$empresa['emp_nome']} &nbsp;&nbsp;";
         }
 
         return <<<HTML
