@@ -3,13 +3,13 @@
 namespace View\Cadastro;
 
 use Funcoes\Layout\Layout as L;
-use App\CADASTRO\Datatables\DatatableMembros;
+use App\CADASTRO\Datatables\DatatableMinisterios;
 use Funcoes\Layout\Form;
 use Funcoes\Layout\FormControls as FC;
 use Funcoes\Layout\Datatable;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 
-class Lista extends ViewHelper
+class Lista extends GlobalHelper
 {
     private string $cabecalho;
     private Form $formFiltros;
@@ -27,6 +27,11 @@ class Lista extends ViewHelper
         $this->inicioFormFiltros();
         $this->montarCamposFiltros();
         $this->montarTabela();
+
+        if (count($this->request->getArray()) == 0) {
+            $this->filtrosPadrao();
+        }
+
         $this->montarScript();
         $this->saidaPagina();
     }
@@ -34,8 +39,8 @@ class Lista extends ViewHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">' . _('Cadastro de Membros') . '</h1>',
-            L::linkButton(_('Novo Membro'), '?posicao=form', '', 'fas fa-plus', 'primary')
+            '<h1 class="m-0 text-dark">' . _('Cadastro de Ministérios') . '</h1>',
+            L::linkButton(_('Novo Ministério'), '?posicao=form', '', 'fas fa-plus', 'primary')
         );
     }
 
@@ -51,27 +56,52 @@ class Lista extends ViewHelper
 
     private function montarCamposFiltros()
     {
-        $filtro_nome   = FC::input(_('Nome'), 'mem_nome', $this->request->get('mem_nome'));
-        $filtro_telefone  = FC::input(_('Telefone'), 'mem_telefone', $this->request->get('mem_telefone'));
+        $filtro_nome   = FC::input(_('Nome'), 'min_nome', $this->request->get('min_nome'), [
+            'div_class' => 'col-md-4',
+            'style' => 'text-transform:uppercase',
+            'class' => 'form-control form-control-sm',
+        ]);
+        $filtro_sigla  = FC::input(_('Sigla'), 'min_sigla', $this->request->get('min_sigla'), [
+            'div_class' => 'col-md-1',
+            'style' => 'text-transform:uppercase',
+            'class' => 'form-control form-control-sm',
+        ]);
+        $filtro_ativo = FC::select(
+            'Situação',
+            'min_ativo',
+            ['T' => 'Todas', 'S' => 'Ativo', 'N' => 'Inativo'],
+            $this->request->get('min_ativo', 'S'),
+            [
+                'div_class' => 'col-md-2',
+                'class' => 'form-control form-control-sm',
+            ]
+        );
 
         $this->formFiltros->setFields([
-            [$filtro_nome, $filtro_telefone]
+            ['<div class="row">' . $filtro_nome . $filtro_sigla . $filtro_ativo . '</div>']
         ]);
     }
 
     private function montarTabela()
     {
-        $this->table = new Datatable(DatatableMembros::class);
+        $this->table = new Datatable(DatatableMinisterios::class);
+    }
+
+    private function filtrosPadrao()
+    {
+        $this->table->addFilters([
+            'min_ativo' => 'S'
+        ]);
     }
 
     private function montarScript()
     {
         $this->script = <<<HTML
             <script>
-                function excluirMembro(mem_id){
-                    confirm('Deseja realmente excluir este membro?').then(result => {
+                function excluirMinisterio(min_id){
+                    confirm('Deseja realmente excluir este Ministério?').then(result => {
                         if (result.isConfirmed) {
-                            window.location.href = '?posicao=excluir&mem_id=' + mem_id;
+                            window.location.href = '?posicao=excluir&min_id=' + min_id;
                         }
                     });
                 }
@@ -92,7 +122,7 @@ class Lista extends ViewHelper
                 </div>
                 {$this->script}
             HTML,
-            ['title' => 'Cadastro de Membros']
+            ['title' => 'Cadastro de Ministérios']
         );
     }
 }

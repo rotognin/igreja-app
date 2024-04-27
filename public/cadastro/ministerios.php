@@ -4,7 +4,7 @@ require_once("header.php");
 
 $classe = ucfirst($request->get('posicao', 'lista'));
 
-$arquivo = 'cadMembros/' . $classe . '.php';
+$arquivo = 'cadMinisterios/' . $classe . '.php';
 
 if (!file_exists($arquivo)) {
     $session->flash('error', _('Arquivo não encontrado: ' . $arquivo));

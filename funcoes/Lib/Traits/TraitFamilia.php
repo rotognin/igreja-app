@@ -13,7 +13,7 @@ trait TraitFamilia
         $this->familiasDAO = new Familias();
     }
 
-    public function buscarFamilias()
+    public function buscarFamilias(string $placeholder = 'Todas')
     {
         $this->getDAOFamilias();
 
@@ -26,6 +26,6 @@ trait TraitFamilia
             }
         }
 
-        return array_merge(['0' => 'Todas'] + $familias);
+        return array_merge(['0' => $placeholder] + $familias);
     }
 }

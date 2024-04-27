@@ -2,12 +2,12 @@
 
 namespace View\Movimentacoes;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\MOVIMENTACOES\DAO\Visitas;
 use Funcoes\Lib\Traits\TraitVisitaIntegrantes;
 use Funcoes\Helpers\Format;
 
-class Salvar extends ViewHelper
+class Salvar extends GlobalHelper
 {
     use TraitVisitaIntegrantes;
 

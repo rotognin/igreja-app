@@ -4,27 +4,19 @@ namespace App\CADASTRO\DAO;
 
 use Funcoes\Lib\DAO;
 
-class Membros extends DAO
+class Ministerios extends DAO
 {
     private array $colunas = array(
-        'mem_id',
-        'mem_nome',
-        'mem_telefone',
-        'mem_data_inc',
-        'mem_usu_inc',
-        'mem_data_alt',
-        'mem_usu_alt',
-        'mem_data_exc',
-        'mem_usu_exc',
-        'mem_email',
-        'mem_endereco',
-        'mem_numero',
-        'mem_bairro',
-        'mem_cidade',
-        'mem_estado',
-        'mem_cep',
-        'mem_familia_id',
-        'mem_complemento'
+        'min_id',
+        'min_nome',
+        'min_sigla',
+        'min_ativo',
+        'min_data_inc',
+        'min_usu_inc',
+        'min_data_alt',
+        'min_usu_alt',
+        'min_data_exc',
+        'min_usu_exc'
     );
 
     public function __construct()
@@ -33,17 +25,17 @@ class Membros extends DAO
         $this->default = $this->dbManager->get('default');
     }
 
-    public function get($mem_id): array
+    public function get($min_id): array
     {
-        $membros = $this->getArray(["AND mem_id = ?", [$mem_id]]);
-        return $membros[0] ?? [];
+        $registros = $this->getArray(["AND min_id = ?", [$min_id]]);
+        return $registros[0] ?? [];
     }
 
     public function total($where = [])
     {
-        $sql = "SELECT COUNT(mem_id) AS total 
-                FROM {$this->table('igreja_db', 'membros')} 
-                WHERE mem_usu_exc IS NULL";
+        $sql = "SELECT COUNT(min_id) AS total 
+                    FROM {$this->table('igreja_db', 'ministerios')} 
+                WHERE min_usu_exc IS NULL";
 
         if ($where) {
             $sql .= "$where[0]";
@@ -60,10 +52,9 @@ class Membros extends DAO
         $campos = implode(', ', $this->colunas);
 
         $sql = "SELECT 
-            {$campos}, f.fam_nome
-        FROM {$this->table('igreja_db', 'membros')} 
-        LEFT JOIN {$this->table('igreja_db', 'familias')} f ON f.fam_id = mem_familia_id 
-        WHERE mem_usu_exc IS NULL 
+                    {$campos}
+                FROM {$this->table('igreja_db', 'ministerios')}
+                WHERE min_usu_exc IS NULL 
         ";
 
         if ($where) {
@@ -90,17 +81,17 @@ class Membros extends DAO
 
     public function insert(array $record): int
     {
-        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'membros'), $record);
+        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'ministerios'), $record);
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
         return $this->default->lastInsertId();
     }
 
-    public function update(string $mem_id, array $record): int
+    public function update(string $min_id, array $record): int
     {
-        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'membros'), $record);
-        $sql .= " WHERE mem_id = ?";
-        $args[] = $mem_id;
+        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'ministerios'), $record);
+        $sql .= " WHERE min_id = ?";
+        $args[] = $min_id;
 
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);

@@ -2,7 +2,7 @@
 
 namespace Funcoes\Lib;
 
-class ViewHelper
+class GlobalHelper
 {
     protected $request;
     protected $response;

@@ -5,9 +5,9 @@ namespace View\Administracao;
 use Funcoes\Layout\Layout as L;
 use Funcoes\Layout\FormControls as FC;
 use Funcoes\Layout\Form;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 
-class Principal extends ViewHelper
+class Principal extends GlobalHelper
 {
     private Form $formBotoes;
 

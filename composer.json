@@ -6,7 +6,8 @@
             "App\\": "src/",
             "Funcoes\\": "funcoes/",
             "View\\": "public/",
-            "View\\Cadastro\\": "public/cadastro/"
+            "View\\Cadastro\\": "public/cadastro/",
+            "View\\Movimentacao\\": "public/movimentacao/"
         }
     },
     "authors": [

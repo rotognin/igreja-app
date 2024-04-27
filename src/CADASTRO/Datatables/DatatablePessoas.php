@@ -96,12 +96,15 @@ class DatatablePessoas extends Definitions
             $offset = 0;
         }
 
-        $total = $pessoasDAO->total($where);
+        //$total = $pessoasDAO->total($where);
         $registros = $pessoasDAO->getArray($where, $orderBy ?? 'pes_nome ASC', $limit, $offset);
 
         $data = [];
+        $total = 0;
 
-        if ($total > 0) {
+        if (!empty($registros)) {
+            $total = $registros[0]['total'] ?? count($registros);
+
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
                     L::linkButton('', "?posicao=form&pes_id={$reg['pes_id']}", _('Editar Pessoa'), 'fas fa-edit', 'outline-secondary', 'sm'),

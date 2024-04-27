@@ -85,17 +85,28 @@ class NavMenu
 
                 $active = !empty($child['prg_url']) && strpos($request->server('SCRIPT_NAME'), $child['prg_url']) !== false ? 'active' : '';
 
+                $padding = 12 * $child['prg_nivel'];
+
+                $iconPadding = 2;
+
+                if ($padding > 0) {
+                    $iconPadding += $padding;
+                }
+
+                $style = ($padding > 0) ? 'padding-left: ' . $padding . 'px;' : '';
+                $tagStyle = ($padding > 0) ? ' style="' . $style . '"' : '';
+
                 $prgHTML .= <<<HTML
-                <li class="nav-item">
-                    <a href="{$child['prg_url']}" class="d-flex align-items-center nav-link $active" title="{$child['prg_descricao']}">
-                        <i class="nav-icon {$child['prg_icone']}"></i>
-                        <p class="d-inline-block text-truncate" style="padding-left: 5px; white-space:nowrap;max-width: 75%">
-                            {$child['prg_descricao']}
-                            $caret
-                        </p>
-                    </a>
-                    $childrenHTML
-                </li>
+                    <li class="nav-item">
+                        <a href="{$child['prg_url']}" class="d-flex align-items-center nav-link $active" title="{$child['prg_descricao']}">
+                            <i class="nav-icon {$child['prg_icone']}" {$tagStyle}></i>
+                            <p class="d-inline-block text-truncate" style="padding-left: {$iconPadding}px; white-space:nowrap;max-width: 75%">
+                                {$child['prg_descricao']}
+                                $caret
+                            </p>
+                        </a>
+                        $childrenHTML
+                    </li>
                 HTML;
             }
 

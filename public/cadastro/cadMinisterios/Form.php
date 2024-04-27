@@ -5,14 +5,13 @@ namespace View\Cadastro;
 use Funcoes\Layout\Layout as L;
 use Funcoes\Layout\Form as Formulario;
 use Funcoes\Layout\FormControls as FC;
-use App\CADASTRO\DAO\Familias;
 use Funcoes\Lib\GlobalHelper;
-use Funcoes\Lib\Constantes;
+use App\CADASTRO\DAO\Ministerios;
 
 class Form extends GlobalHelper
 {
-    private Familias $familiasDAO;
-    private array $aFamilia = [];
+    private Ministerios $ministeriosDAO;
+    private array $aMinisterio = [];
     private string $cabecalho;
     private Formulario $form;
     private bool $novo = true;
@@ -41,7 +40,7 @@ class Form extends GlobalHelper
 
     private function iniciarDAO()
     {
-        $this->familiasDAO = new Familias();
+        $this->ministeriosDAO = new Ministerios();
     }
 
     private function existeRetorno(): bool
@@ -49,7 +48,7 @@ class Form extends GlobalHelper
         $existeRetorno = false;
 
         if ($this->session->check('previous')) {
-            $this->aFamilia = $this->session->get('previous');
+            $this->aMinisterio = $this->session->get('previous');
             $existeRetorno = true;
         }
 
@@ -58,13 +57,13 @@ class Form extends GlobalHelper
 
     private function checarID()
     {
-        $fam_id = $this->request->get('fam_id', 0);
+        $min_id = $this->request->get('min_id', 0);
 
-        if ($fam_id > 0) {
-            $this->aFamilia = $this->familiasDAO->get($fam_id);
+        if ($min_id > 0) {
+            $this->aMinisterio = $this->ministeriosDAO->get($min_id);
             $this->novo = false;
 
-            if (empty($this->aFamilia)) {
+            if (empty($this->aMinisterio)) {
                 $this->session->flash('error', _('Registro não encontrado'));
                 return $this->response->back();
             }
@@ -74,30 +73,30 @@ class Form extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">' . _('Cadastro de Famílias') . '</h1>',
-            L::linkbutton('Voltar', 'familias.php', 'Voltar', 'fas fa-angle-left')
+            '<h1 class="m-0 text-dark">Cadastro de Ministérios</h1>',
+            L::linkbutton('Voltar', 'ministerios.php', 'Voltar', 'fas fa-angle-left')
         );
     }
 
     private function inicioForm()
     {
         $this->form = new Formulario();
-        $this->form->setTitle($this->novo ? _('Nova Família') : _('Editar Família')  . ": {$this->aFamilia['fam_id']} - {$this->aFamilia['fam_nome']}");
-        $this->form->setForm('id="form-familias" action="?posicao=salvar" method="post"');
+        $this->form->setTitle($this->novo ? _('Novo Ministério') : _('Editar Ministério')  . ": {$this->aMinisterio['min_id']} - {$this->aMinisterio['min_nome']}");
+        $this->form->setForm('id="form-ministerios" action="?posicao=salvar" method="post"');
     }
 
     private function montarCampos()
     {
         if (!$this->novo) {
-            $this->form->addHidden(FC::hidden('fam_id', $this->aFamilia['fam_id']));
+            $this->form->addHidden(FC::hidden('min_id', $this->aMinisterio['min_id']));
         }
 
         $this->form->addHidden(FC::hidden('novo', ($this->novo) ? 'S' : 'N'));
 
         $campo_nome = FC::input(
-            _('Nome'),
-            'fam_nome',
-            $this->aFamilia['fam_nome'] ?? '',
+            'Nome',
+            'min_nome',
+            $this->aMinisterio['min_nome'] ?? '',
             [
                 'div_class' => 'col-md-6',
                 'style' => 'text-transform:uppercase',
@@ -105,19 +104,26 @@ class Form extends GlobalHelper
                 'autofocus' => 'autofocus'
             ]
         );
-        $campo_observacao = FC::textarea(
-            _('Observação'),
-            'fam_observacao',
-            $aFamilia['fam_observacao'] ?? '',
+
+        $campo_sigla = FC::input(
+            'Sigla',
+            'min_sigla',
+            $this->aMinisterio['min_sigla'] ?? '',
             [
+                'div_class' => 'col-md-1',
                 'class' => 'form-control form-control-sm',
+                'maxlength' => '3',
                 'style' => 'text-transform:uppercase'
             ]
         );
 
+        $campo_ativo = FC::select('Ativo', 'min_ativo', ['S' => 'Sim', 'N' => 'Não'], $this->aMinisterio['min_ativo'] ?? 'S', [
+            'div_class' => 'col-md-1',
+            'class' => 'form-control form-control-sm'
+        ]);
+
         $this->form->setFields([
-            ['<div class="row">' . $campo_nome . '</div>'],
-            [$campo_observacao]
+            ['<div class="row">' . $campo_nome . $campo_sigla . $campo_ativo . '</div>']
         ]);
 
         $this->form->setActions(L::submit(_('Salvar')));
@@ -126,7 +132,8 @@ class Form extends GlobalHelper
     private function montarMensagens()
     {
         $this->aMensagens = array(
-            'fam_nome' => _('Informe o Nome')
+            'min_nome'     => 'Informe o Nome do Ministério',
+            'min_sigla' => 'Informe uma Sigla para o Ministério'
         );
     }
 
@@ -135,15 +142,21 @@ class Form extends GlobalHelper
         $this->script = <<<HTML
             <script>
                 $(function(){
-                    $('#form-familias').validate({
+                    $('#form-ministerios').validate({
                         rules: {
-                            fam_nome: {
+                            min_nome: {
+                                required: true
+                            },
+                            min_sigla: {
                                 required: true
                             }
                         },
                         messages: {
-                            fam_nome: {
-                                required: '{$this->aMensagens["fam_nome"]}'
+                            min_nome: {
+                                required: '{$this->aMensagens["min_nome"]}'
+                            },
+                            min_sigla: {
+                                required: '{$this->aMensagens["min_sigla"]}'
                             }
                         },
                         invalidHandler: function(form, validator){
@@ -167,7 +180,7 @@ class Form extends GlobalHelper
                 </div>
                 {$this->script}
             HTML,
-            ['title' => 'Cadastro de Família']
+            ['title' => 'Cadastro de Ministério']
         );
     }
 }

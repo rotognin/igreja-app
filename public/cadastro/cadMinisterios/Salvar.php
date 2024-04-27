@@ -3,11 +3,11 @@
 namespace View\Cadastro;
 
 use Funcoes\Lib\GlobalHelper;
-use App\CADASTRO\DAO\Familias;
+use App\CADASTRO\DAO\Ministerios;
 
 class Salvar extends GlobalHelper
 {
-    private Familias $familiasDAO;
+    private Ministerios $ministeriosDAO;
     private array $campos = [];
 
     public function __construct()
@@ -27,14 +27,15 @@ class Salvar extends GlobalHelper
 
     private function iniciarDAO()
     {
-        $this->familiasDAO = new Familias();
+        $this->ministeriosDAO = new Ministerios();
     }
 
     private function preencherCampos()
     {
         $this->campos = [
-            'fam_nome'        => mb_strtoupper($this->request->post('fam_nome')),
-            'fam_observacao'  => mb_strtoupper($this->request->post('fam_observacao'))
+            'min_nome'  => mb_strtoupper($this->request->post('min_nome')),
+            'min_sigla' => mb_strtoupper($this->request->post('min_sigla')),
+            'min_ativo' => $this->request->post('min_ativo')
         ];
     }
 
@@ -46,39 +47,39 @@ class Salvar extends GlobalHelper
     private function inserirRegistro()
     {
         $this->campos = array_merge($this->campos, [
-            'fam_data_inc' => date('Y-m-d H:i:s'),
-            'fam_usu_inc' => $this->session->get('credentials.default')
+            'min_data_inc' => date('Y-m-d H:i:s'),
+            'min_usu_inc' => $this->session->get('credentials.default')
         ]);
 
-        $fam_id = $this->familiasDAO->insert($this->campos);
+        $min_id = $this->ministeriosDAO->insert($this->campos);
 
-        if ($fam_id) {
-            $this->session->flash('success', _('Cadastro efetuado com sucesso'));
+        if ($min_id) {
+            $this->session->flash('success', 'Cadastro efetuado com sucesso');
         } else {
-            $this->voltarErro(_('Cadastro não foi gravado'));
+            $this->voltarErro('Cadastro não foi gravado');
         }
     }
 
     private function atualizarRegistro()
     {
-        $fam_id = $this->request->post('fam_id', '0');
+        $min_id = $this->request->post('min_id', '0');
 
-        if ($fam_id == '0') {
-            $this->voltarErro(_('Identificador não informado'));
+        if ($min_id == '0') {
+            $this->voltarErro('Identificador não informado');
         }
 
-        $registro = $this->familiasDAO->get($fam_id);
+        $registro = $this->ministeriosDAO->get($min_id);
 
         if (empty($registro)) {
             $this->voltarErro(_('Registro não existente'));
         }
 
         $this->campos = array_merge($this->campos, [
-            'fam_data_alt' => date('Y-m-d H:i:s'),
-            'fam_usu_alt' => $this->session->get('credentials.default')
+            'min_data_alt' => date('Y-m-d H:i:s'),
+            'min_usu_alt' => $this->session->get('credentials.default')
         ]);
 
-        $atualizado = $this->familiasDAO->update($fam_id, $this->campos);
+        $atualizado = $this->ministeriosDAO->update($min_id, $this->campos);
 
         if ($atualizado) {
             $this->session->flash('success', _('Cadastro atualizado com sucesso'));
@@ -96,6 +97,6 @@ class Salvar extends GlobalHelper
 
     private function saidaPagina()
     {
-        $this->response->redirect("familias.php");
+        $this->response->redirect("ministerios.php");
     }
 }

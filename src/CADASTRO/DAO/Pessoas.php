@@ -15,17 +15,19 @@ class Pessoas extends DAO
         'pes_numero',
         'pes_bairro',
         'pes_cidade',
+        'pes_estado',
         'pes_cep',
         'pes_complemento',
         'pes_observacao',
         'pes_familia_id',
+        'pes_membro',
         'pes_data_inc',
         'pes_usu_inc',
         'pes_data_alt',
         'pes_usu_alt',
         'pes_data_exc',
         'pes_usu_exc',
-        'pes_estado'
+        'pes_data_membro'
     );
 
     public function __construct()

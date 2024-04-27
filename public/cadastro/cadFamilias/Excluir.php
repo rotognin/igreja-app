@@ -2,15 +2,13 @@
 
 namespace View\Cadastro;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\CADASTRO\DAO\Familias;
-use App\CADASTRO\DAO\Membros;
 use App\CADASTRO\DAO\Pessoas;
 
-class Excluir extends ViewHelper
+class Excluir extends GlobalHelper
 {
     private Familias $familiasDAO;
-    private Membros $membrosDAO;
     private Pessoas $pessoasDAO;
     private array $aFamilia = [];
 
@@ -30,7 +28,6 @@ class Excluir extends ViewHelper
     private function iniciarDAO()
     {
         $this->familiasDAO = new Familias();
-        $this->membrosDAO = new Membros();
         $this->pessoasDAO = new Pessoas();
     }
 
@@ -63,29 +60,11 @@ class Excluir extends ViewHelper
         ]);
 
         if ($excluido) {
-            $this->excluirMembros($this->aFamilia['fam_id']);
             $this->excluirPessoas($this->aFamilia['fam_id']);
 
             $this->session->flash('success', _('Cadastro excluído'));
         } else {
             $this->voltarErro(_('Cadastro não foi excluído'));
-        }
-    }
-
-    private function excluirMembros(int $fam_id)
-    {
-        $where = array('');
-        $where[0] = ' AND mem_familia_id = ?';
-        $where[1][] = $fam_id;
-        $membros = $this->membrosDAO->getArray($where);
-
-        if ($membros) {
-            foreach ($membros as $membro) {
-                $this->membrosDAO->update($membro['mem_id'], [
-                    'mem_data_exc' => date('Y-m-d H:i:s'),
-                    'mem_usu_exc' => $this->session->get('credentials.default')
-                ]);
-            }
         }
     }
 

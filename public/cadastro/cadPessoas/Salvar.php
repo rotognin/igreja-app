@@ -2,10 +2,11 @@
 
 namespace View\Cadastro;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
+use Funcoes\Helpers\Format;
 use App\CADASTRO\DAO\Pessoas;
 
-class Salvar extends ViewHelper
+class Salvar extends GlobalHelper
 {
     private Pessoas $pessoasDAO;
     private array $campos = [];
@@ -32,6 +33,14 @@ class Salvar extends ViewHelper
 
     private function preencherCampos()
     {
+        $data_membro = $this->request->post('pes_data_membro', '');
+        $array_data = array();
+
+        if ($data_membro != NULL) {
+            $data_membro = Format::sqlDatetime($data_membro, 'd/m/Y', 'Y-m-d');
+            $array_data = array('pes_data_membro' => $data_membro);
+        }
+
         $this->campos = [
             'pes_nome'        => mb_strtoupper($this->request->post('pes_nome')),
             'pes_telefone'    => $this->request->post('pes_telefone'),
@@ -43,8 +52,9 @@ class Salvar extends ViewHelper
             'pes_cidade'      => mb_strtoupper($this->request->post('pes_cidade')),
             'pes_estado'      => $this->request->post('pes_estado'),
             'pes_cep'         => preg_replace("/[^0-9]/", '', $this->request->post('pes_cep')),
-            'pes_familia_id'  => $this->request->post('pes_familia_id')
-        ];
+            'pes_familia_id'  => $this->request->post('pes_familia_id'),
+            'pes_membro'      => ($this->request->post('pes_membro', '') == '') ? 'N' : 'S'
+        ] + $array_data;
     }
 
     private function novoCadastro()

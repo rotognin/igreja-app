@@ -2,10 +2,10 @@
 
 namespace View\Cadastro;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\CADASTRO\DAO\Pessoas;
 
-class Excluir extends ViewHelper
+class Excluir extends GlobalHelper
 {
     private Pessoas $pessoasDAO;
     private array $aPessoa = [];

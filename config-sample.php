@@ -4,7 +4,8 @@ return [
     'app' => [
         'title' => 'Igreja-APP',
         'language' => 'pt_BR',
-        'timezone' => 'America/Sao_Paulo'
+        'timezone' => 'America/Sao_Paulo',
+        'url' => 'localhost:8085'
     ],
     'db' => [
         'default' => [

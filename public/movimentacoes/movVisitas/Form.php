@@ -7,14 +7,14 @@ use Funcoes\Layout\Form as Formulario;
 use Funcoes\Layout\FormControls as FC;
 use App\CADASTRO\DAO\Familias;
 use App\MOVIMENTACOES\DAO\Visitas;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use Funcoes\Helpers\Format;
 use Funcoes\Lib\Traits\TraitFamilia;
 use Funcoes\Lib\Traits\TraitMembros;
 use Funcoes\Lib\Traits\TraitPessoas;
 use Funcoes\Lib\Traits\TraitVisitaIntegrantes;
 
-class Form extends ViewHelper
+class Form extends GlobalHelper
 {
     use TraitFamilia, TraitMembros, TraitPessoas, TraitVisitaIntegrantes;
 

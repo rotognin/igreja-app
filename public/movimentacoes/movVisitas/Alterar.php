@@ -2,11 +2,11 @@
 
 namespace View\Movimentacoes;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\MOVIMENTACOES\DAO\Visitas;
 use Funcoes\Helpers\Format;
 
-class Alterar extends ViewHelper
+class Alterar extends GlobalHelper
 {
     private Visitas $visitasDAO;
     private array $campos = [];

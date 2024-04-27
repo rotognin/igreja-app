@@ -21,6 +21,7 @@ if ($posicao == 'lista') {
 
     if ($empresas) {
         $table = new Table();
+        $table->setSize('sm');
         $table->addHeader([
             'cols' => [
                 ['value' => 'Código', 'attrs' => ['class' => 'text-center']],

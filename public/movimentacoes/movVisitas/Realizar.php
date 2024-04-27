@@ -5,10 +5,10 @@ namespace View\Movimentacoes;
 use Funcoes\Layout\Layout as L;
 use Funcoes\Layout\Form as Formulario;
 use Funcoes\Layout\FormControls as FC;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\MOVIMENTACOES\DAO\Visitas;
 
-class Realizar extends ViewHelper
+class Realizar extends GlobalHelper
 {
     private Visitas $visitasDAO;
     private array $aVisita;

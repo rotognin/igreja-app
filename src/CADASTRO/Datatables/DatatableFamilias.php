@@ -80,12 +80,15 @@ class DatatableFamilias extends Definitions
             $offset = 0;
         }
 
-        $total = $familiasDAO->total($where);
+        //$total = $familiasDAO->total($where);
         $registros = $familiasDAO->getArray($where, $orderBy ?? 'fam_nome ASC', $limit, $offset);
 
         $data = [];
+        $total = 0;
 
-        if ($total > 0) {
+        if (!empty($registros)) {
+            $total = $registros[0]['total'] ?? count($registros);
+
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
                     L::linkButton('', "?posicao=form&fam_id={$reg['fam_id']}", _('Editar Família'), 'fas fa-edit', 'outline-secondary', 'sm'),

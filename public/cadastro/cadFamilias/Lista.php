@@ -7,9 +7,9 @@ use App\CADASTRO\Datatables\DatatableFamilias;
 use Funcoes\Layout\Form;
 use Funcoes\Layout\FormControls as FC;
 use Funcoes\Layout\Datatable;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 
-class Lista extends ViewHelper
+class Lista extends GlobalHelper
 {
     private string $cabecalho;
     private Form $formFiltros;

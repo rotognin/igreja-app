@@ -7,11 +7,12 @@ use Funcoes\Layout\Form as Formulario;
 use Funcoes\Layout\FormControls as FC;
 use App\CADASTRO\DAO\Pessoas;
 use App\CADASTRO\DAO\Familias;
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use Funcoes\Lib\Constantes;
 use Funcoes\Lib\Traits\TraitFamilia;
+use Funcoes\Helpers\Format;
 
-class Form extends ViewHelper
+class Form extends GlobalHelper
 {
     use TraitFamilia;
 
@@ -200,15 +201,61 @@ class Form extends ViewHelper
             ]
         );
 
-        $familias = $this->buscarFamilias();
-        $campo_familia = FC::select(_('Família'), 'pes_familia_id', $familias, $this->aPessoa['pes_familia_id'] ?? '0', ['class' => 'form-control form-control-sm', 'div_class' => 'col-md-3']);
+        $familias = $this->buscarFamilias('');
+        $campo_familia = FC::select(
+            _('Família'),
+            'pes_familia_id',
+            $familias,
+            $this->aPessoa['pes_familia_id'] ?? '0',
+            [
+                'class' => 'form-control form-control-sm',
+                'div_class' => 'col-md-3'
+            ]
+        );
+
+        $check_membro = ($this->aPessoa['pes_membro'] == 'S') ? 'checked' : '';
+
+        $campo_membro = FC::checkbox(
+            'Membro',
+            'pes_membro',
+            1,
+            [
+                'div_class' => 'form-check-inline align-self-center ml-4',
+                'checked' => $check_membro,
+                'class' => 'form-control form-control-sm mr-2',
+                'event' => 'onclick="verificarMembro()"'
+            ]
+        );
+
+        $aDisabled = array();
+
+        if ($this->aPessoa['pes_membro'] ?? 'N' == 'N') {
+            $aDisabled = array('disabled' => 'disabled');
+        }
+
+        $data_membro = $this->aPessoa['pes_data_membro'] ?? '';
+
+        if ($data_membro != '') {
+            $data_membro = Format::date($data_membro);
+        }
+
+        $campo_data_membro = FC::date(
+            '<nobr>Membro desde</nobr>',
+            'pes_data_membro',
+            $data_membro,
+            [
+                'class' => 'form-control form-control-sm',
+                'div_class' => 'col-md-2'
+            ] + $aDisabled
+        );
 
         $this->form->setFields([
             ['<div class="row">' . $campo_nome . $campo_telefone . $campo_email . '</div>'],
             ['<div class="row">' . $campo_endereco . $campo_numero . $campo_bairro . '</div>'],
             ['<div class="row">' . $campo_complemento . '</div>'],
             ['<div class="row">' . $campo_cep . $campo_cidade . $campo_estado . '</div>'],
-            ['<div class="row">' . $campo_familia . '</div>']
+            ['<div class="row">' . $campo_familia . '</div>'],
+            ['<div class="row">' . $campo_membro . $campo_data_membro . '</div>']
         ]);
 
         $this->form->setActions(L::submit(_('Salvar')));
@@ -228,6 +275,8 @@ class Form extends ViewHelper
         $this->script = <<<HTML
             <script>
                 $(function(){
+                    verificarMembro();
+
                     $("#pes_cep").keypress(function(){
                         var cep = $("#pes_cep").val();
                         cep = formatar_cep(cep);
@@ -262,6 +311,14 @@ class Form extends ViewHelper
                         }
                     });
                 });
+
+                function verificarMembro(){
+                    if ($("#pes_membro").is(':checked')){
+                        $("#pes_data_membro").prop('disabled', false);
+                    } else {
+                        $("#pes_data_membro").prop('disabled', true);
+                    }
+                }
             </script>
         HTML;
     }

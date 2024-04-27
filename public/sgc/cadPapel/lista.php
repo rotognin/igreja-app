@@ -16,6 +16,8 @@ $html = L::alert('warning', 'Nenhum papel cadastrado');
 
 if ($aPapeis) {
     $table = new Table();
+    $table->setSize('sm');
+
     $table->addHeader([
         'cols' => [
             ['value' => 'Descrição'],

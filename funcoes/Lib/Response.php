@@ -62,6 +62,7 @@ class Response
     {
         $this->css[10] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icheck-bootstrap@3.0.1/icheck-bootstrap.min.css">';
         $this->css[20] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">';
+        $this->css[110] = '<link rel="stylesheet" href="/assets/css/compact.css">';
     }
 
     public function loginPage($content, $params = [])
@@ -121,7 +122,7 @@ class Response
         $notificationWidget = \Funcoes\Layout\NotificationWidget::render();
         $navMenu = \Funcoes\Layout\NavMenu::render();
         echo <<<HTML
-        <body class="layout-navbar-fixed sidebar-mini layout-fixed">
+        <body class="layout-navbar-fixed sidebar-mini layout-fixed d3v-compact">
             <div class="wrapper">
                 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
                     <ul class="navbar-nav">
@@ -158,14 +159,14 @@ class Response
                     </a>
                     <div class="sidebar">
                         <div class="form-inline mt-2">
-                            <div class="input-group" data-widget="sidebar-search">
+                            <!--div class="input-group" data-widget="sidebar-search">
                                 <input class="form-control form-control-sidebar" type="search" placeholder="Pesquisar programas" aria-label="Pesquisar programas">
                                 <div class="input-group-append">
                                     <button class="btn btn-sidebar">
                                         <i class="fas fa-search fa-fw"></i>
                                     </button>
                                 </div>
-                            </div>
+                            </div-->
                         </div>
                         $navMenu
                     </div>

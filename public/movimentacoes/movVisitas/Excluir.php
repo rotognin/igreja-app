@@ -2,10 +2,10 @@
 
 namespace View\Movimentacoes;
 
-use Funcoes\Lib\ViewHelper;
+use Funcoes\Lib\GlobalHelper;
 use App\MOVIMENTACOES\DAO\Visitas;
 
-class Excluir extends ViewHelper
+class Excluir extends GlobalHelper
 {
     private Visitas $visitasDAO;
     private array $aVisita;
