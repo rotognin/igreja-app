@@ -127,12 +127,14 @@ class FormControls
         $div_class = $attrs['div_class'] ?? '';
         $event = $attrs['event'] ?? '';
         $prop = $attrs['prop'] ?? '';
+        $sem_label = $attrs['sem_label'] ?? true;
 
         unset($attrs['id']);
         unset($attrs['class']);
         unset($attrs['div_class']);
         unset($attrs['event']);
         unset($attrs['prop']);
+        unset($attrs['sem_label']);
 
         $optionsHTML = "";
         foreach ($options as $optValue => $text) {
@@ -150,9 +152,12 @@ class FormControls
         }
 
         $attrs = HTML::attrs($attrs);
+
+        $addLabel = ($sem_label) ? '' : "<label for='{$id}'>{$label}</label>";
+
         return <<<HTML
         <div class="form-group $div_class " $event>
-            <label for="$id">$label</label>
+            $addLabel
             <select name="$name" id="$id" class="$class" $attrs $prop>
                 $optionsHTML
             </select>

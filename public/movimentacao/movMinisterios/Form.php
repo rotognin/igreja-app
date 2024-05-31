@@ -3,19 +3,25 @@
 namespace View\Movimentacoes;
 
 use Funcoes\Layout\Layout as L;
+use Funcoes\Layout\Form as Formulario;
+use Funcoes\Layout\FormControls as FC;
 use App\CADASTRO\DAO\Ministerios;
 use App\MOVIMENTACOES\DAO\Ministerios as MovMinisterios;
+use App\CADASTRO\DAO\Pessoas;
 use Funcoes\Layout\Table;
 use Funcoes\Lib\GlobalHelper;
 
-class Lista extends GlobalHelper
+class Form extends GlobalHelper
 {
     private string $cabecalho;
     private Table $table;
     private string $script;
+    private Formulario $form;
     private Ministerios $ministeriosDAO;
-    private MovMinisterios $movMinisteriorDAO;
-    private array $ministerios;
+    private MovMinisterios $movMinisteriosDAO;
+    private Pessoas $pessoasDAO;
+    private array $pessoas;
+    private array $ministerio;
 
     public function __construct()
     {
@@ -27,29 +33,41 @@ class Lista extends GlobalHelper
         $this->iniciarDAO();
         $this->iniciarVars();
         $this->montarCabecalho();
+        $this->inicioForm();
         $this->montarTabela();
-        $this->buscarMinisterios();
-        $this->montarMinisterios();
+        $this->buscarPessoas();
+        $this->montarPessoas();
         $this->montarScript();
         $this->saidaPagina();
     }
 
     private function iniciarDAO()
     {
+        $this->movMinisteriosDAO = new MovMinisterios();
         $this->ministeriosDAO = new Ministerios();
-        $this->movMinisteriorDAO = new MovMinisterios();
+        $this->pessoasDAO = new Pessoas();
     }
 
     private function iniciarVars()
     {
-        $this->ministerios = array();
+        $this->pessoas = array();
+        $this->ministerio = $this->ministeriosDAO->get($this->request->get('min_id'));
     }
 
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">Movimentações em Ministérios</h1>'
+            '<h1 class="m-0 text-dark">Atribuir pessoas ao Ministério</h1>',
+            L::backButton()
         );
+    }
+
+    private function inicioForm()
+    {
+        $this->form = new Formulario();
+        $this->form->setTitle($this->ministerio['min_sigla'] . ' - ' . $this->ministerio['min_nome']);
+        $this->form->setForm('id="form-pessoas" action="?posicao=salvar" method="post"');
+        $this->form->addHidden(FC::hidden('mvm_ministerio', $this->request->get('min_id')));
     }
 
     private function montarTabela()
@@ -60,55 +78,61 @@ class Lista extends GlobalHelper
 
         $this->table->addHeader([
             'cols' => [
+                ['value' => '', 'attrs' => ['class' => 'text-center']],
                 ['value' => 'Código', 'attrs' => ['class' => 'text-center']],
                 ['value' => 'Nome', 'attrs' => ['class' => 'text-center']],
-                ['value' => 'Sigla', 'attrs' => ['class' => 'text-center']],
-                ['value' => 'Participantes', 'attrs' => ['class' => 'text-center']],
-                ['value' => 'Ações', 'attrs' => ['class' => 'text-center']],
-            ],
+                ['value' => 'Membro?', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Função', 'attrs' => ['class' => 'text-center']]
+            ]
         ]);
     }
 
-    private function buscarMinisterios()
+    private function buscarPessoas()
     {
-        $this->ministerios = $this->ministeriosDAO->getArray();
+        $this->pessoas = $this->pessoasDAO->getArray();
     }
 
-    private function montarMinisterios()
+    private function montarPessoas()
     {
-        if (!empty($this->ministerios)) {
-            foreach ($this->ministerios as $min) {
+        if (!empty($this->pessoas)) {
+            foreach ($this->pessoas as $pes) {
                 $where = array('');
-                $where[0] = ' AND m.mvm_ministerio = ?';
-                $where[1][] = $min['min_id'];
+                $where[0] = ' AND m.mvm_pessoa = ?';
+                $where[1][] = $pes['pes_id'];
 
-                $aParticipantes = $this->movMinisteriorDAO->getArray($where);
+                $aMovMin = $this->movMinisteriosDAO->getArray($where);
 
-                $participantes = array_map(function ($pessoa) {
-                    return $pessoa['pes_nome'];
-                }, $aParticipantes);
+                $checkbox = FC::checkbox('', 'pessoa_' . $pes['pes_id'], '1', [
+                    'checked' => (empty($aMovMin)) ? '' : 'checked'
+                ]);
 
-                $botao = L::buttonGroup([
-                    L::linkButton('', '?posicao=form&min_id=' . $min['min_id'], 'Participantes', 'fas fa-users', 'outline-success', 'sm')
+                $campo_funcao = FC::select('', 'mvm_funcao_' . $pes['pes_id'], $this->movMinisteriosDAO->getFuncao(), $aMovMin[0]['mvm_funcao'] ?? 'P', [
+                    'class' => 'form-control form-control-sm',
                 ]);
 
                 $this->table->addRow([
                     'cols' => [
-                        ['value' => $min['min_id'], 'attrs' => ['class' => 'text-center']],
-                        ['value' => $min['min_nome'], 'attrs' => ['class' => 'text-left']],
-                        ['value' => $min['min_sigla'], 'attrs' => ['class' => 'text-center']],
-                        ['value' => implode(', ', $participantes), 'attrs' => ['class' => 'text-left']],
-                        ['value' => $botao, 'attrs' => ['class' => 'text-center']]
+                        ['value' => $checkbox, 'attrs' => ['class' => 'text-center align-middle m-0 p-0']],
+                        ['value' => $pes['pes_id'], 'attrs' => ['class' => 'text-center align-middle m-0 p-0']],
+                        ['value' => $pes['pes_nome'], 'attrs' => ['class' => 'text-left align-middle m-0 p-0']],
+                        ['value' => ($pes['pes_membro'] == 'S') ? 'Sim' : 'Não', 'attrs' => ['class' => 'text-center align-middle m-0 p-0']],
+                        ['value' => $campo_funcao, 'attrs' => ['class' => 'text-center align-middle m-0 p-0']]
                     ]
                 ]);
             }
         } else {
             $this->table->addRow([
                 'cols' => [
-                    ['value' => L::alert('info', 'Nenhum ministério cadastrado'), 'attrs' => ['colspan' => '5']]
+                    ['value' => L::alert('info', 'Nenhuma pessoa cadastrada'), 'attrs' => ['colspan' => '5']]
                 ]
             ]);
         }
+
+        $this->form->setFields([
+            [$this->table->html()]
+        ]);
+
+        $this->form->setActions(L::submit(_('Salvar')));
     }
 
     private function montarScript()
@@ -126,12 +150,12 @@ class Lista extends GlobalHelper
                 {$this->cabecalho}
                 <div class="content">
                     <div class="container-fluid pb-1">
-                        {$this->table->html()}
+                        {$this->form->html()}
                     </div>
                 </div>
                 {$this->script}
             HTML,
-            ['title' => 'Movimentação em Ministérios']
+            ['title' => 'Pessoas no Ministério']
         );
     }
 }

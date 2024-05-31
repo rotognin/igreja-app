@@ -117,4 +117,22 @@ class Ministerios extends DAO
         $stmt->execute($args);
         return $stmt->rowCount();
     }
+
+    public function deleteMinisterio(string $mvm_ministerio)
+    {
+        // Excluir todas as ligações de pessoas com um ministério específico
+        $sql = "DELETE FROM {$this->table('igreja_db', 'mov_ministerios')} WHERE mvm_ministerio = ?";
+        $stmt = $this->default->prepare($sql);
+        $stmt->execute([$mvm_ministerio]);
+        return $stmt->rowCount();
+    }
+
+    public function deletePessoa(string $mvm_pessoa)
+    {
+        // Excluir todas as ligações de ministérios com uma pessoa específica
+        $sql = "DELETE FROM {$this->table('igreja_db', 'mov_ministerios')} WHERE mvm_pessoa = ?";
+        $stmt = $this->default->prepare($sql);
+        $stmt->execute([$mvm_pessoa]);
+        return $stmt->rowCount();
+    }
 }

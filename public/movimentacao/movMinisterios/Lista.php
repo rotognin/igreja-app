@@ -14,7 +14,7 @@ class Lista extends GlobalHelper
     private Table $table;
     private string $script;
     private Ministerios $ministeriosDAO;
-    private MovMinisterios $movMinisteriorDAO;
+    private MovMinisterios $movMinisteriosDAO;
     private array $ministerios;
 
     public function __construct()
@@ -37,7 +37,7 @@ class Lista extends GlobalHelper
     private function iniciarDAO()
     {
         $this->ministeriosDAO = new Ministerios();
-        $this->movMinisteriorDAO = new MovMinisterios();
+        $this->movMinisteriosDAO = new MovMinisterios();
     }
 
     private function iniciarVars()
@@ -82,10 +82,16 @@ class Lista extends GlobalHelper
                 $where[0] = ' AND m.mvm_ministerio = ?';
                 $where[1][] = $min['min_id'];
 
-                $aParticipantes = $this->movMinisteriorDAO->getArray($where);
+                $aParticipantes = $this->movMinisteriosDAO->getArray($where);
 
                 $participantes = array_map(function ($pessoa) {
-                    return $pessoa['pes_nome'];
+                    if ($pessoa['mvm_funcao'] == 'L') {
+                        $nome = '<b>' . $pessoa['pes_nome'] . '</b>';
+                    } else {
+                        $nome = $pessoa['pes_nome'];
+                    }
+
+                    return $nome;
                 }, $aParticipantes);
 
                 $botao = L::buttonGroup([
