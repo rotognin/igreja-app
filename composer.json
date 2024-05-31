@@ -7,7 +7,8 @@
             "Funcoes\\": "funcoes/",
             "View\\": "public/",
             "View\\Cadastro\\": "public/cadastro/",
-            "View\\Movimentacao\\": "public/movimentacao/"
+            "View\\Movimentacao\\": "public/movimentacao/",
+            "View\\Relatorio\\": "public/relatorio/"
         }
     },
     "authors": [

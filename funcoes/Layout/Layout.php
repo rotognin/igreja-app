@@ -38,7 +38,7 @@ class Layout
             HTML;
     }
 
-    public static function button($text, $onClick, $title = '', $icon = '', $type = 'default', $size = 'md', $attrs = '', $addClass = '')
+    public static function button($text, $onClick, $title = '', $icon = '', $type = 'default', $size = 'sm', $attrs = '', $addClass = '')
     {
         if (!empty($icon)) {
             $icon = "<i class=\"$icon\"></i>";
@@ -52,7 +52,7 @@ class Layout
             HTML;
     }
 
-    public static function linkButton($text, $href, $title = "", $icon = '', $type = 'default', $size = 'md', $addClass = '', $events = '', $attrs = '')
+    public static function linkButton($text, $href, $title = "", $icon = '', $type = 'default', $size = 'sm', $addClass = '', $events = '', $attrs = '')
     {
         if (!empty($icon)) {
             $icon = "<i class=\"$icon\"></i>";
@@ -66,7 +66,7 @@ class Layout
             HTML;
     }
 
-    public static function backButton($text = "Voltar", $icon = "fas fa-angle-left", $type = "default", $size = 'md')
+    public static function backButton($text = "Voltar", $icon = "fas fa-angle-left", $type = "default", $size = 'sm')
     {
         return self::button($text, 'window.history.back()', '', $icon, $type, $size);
     }
