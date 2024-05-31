@@ -97,8 +97,9 @@ class Form extends GlobalHelper
         if (!empty($this->pessoas)) {
             foreach ($this->pessoas as $pes) {
                 $where = array('');
-                $where[0] = ' AND m.mvm_pessoa = ?';
+                $where[0] = ' AND m.mvm_pessoa = ? AND m.mvm_ministerio = ?';
                 $where[1][] = $pes['pes_id'];
+                $where[1][] = $this->request->get('min_id');
 
                 $aMovMin = $this->movMinisteriosDAO->getArray($where);
 
@@ -107,7 +108,7 @@ class Form extends GlobalHelper
                 ]);
 
                 $campo_funcao = FC::select('', 'mvm_funcao_' . $pes['pes_id'], $this->movMinisteriosDAO->getFuncao(), $aMovMin[0]['mvm_funcao'] ?? 'P', [
-                    'class' => 'form-control form-control-sm',
+                    'class' => 'form-control form-control-sm align-middle', 'sem_label' => true
                 ]);
 
                 $this->table->addRow([
@@ -116,7 +117,7 @@ class Form extends GlobalHelper
                         ['value' => $pes['pes_id'], 'attrs' => ['class' => 'text-center align-middle m-0 p-0']],
                         ['value' => $pes['pes_nome'], 'attrs' => ['class' => 'text-left align-middle m-0 p-0']],
                         ['value' => ($pes['pes_membro'] == 'S') ? 'Sim' : 'Não', 'attrs' => ['class' => 'text-center align-middle m-0 p-0']],
-                        ['value' => $campo_funcao, 'attrs' => ['class' => 'text-center align-middle m-0 p-0']]
+                        ['value' => $campo_funcao, 'attrs' => ['class' => 'text-center align-middle m-0 p-0 pt-2 pr-1']]
                     ]
                 ]);
             }

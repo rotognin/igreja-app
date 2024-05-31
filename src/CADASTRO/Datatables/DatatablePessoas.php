@@ -41,7 +41,7 @@ class DatatablePessoas extends Definitions
                 ['name' => 'pes_familia_id'],
                 ['name' => 'acoes']
             ],
-            'order' => [[1, 'asc']],
+            'order' => [[0, 'asc']],
             'columnDefs' => [
                 ['targets' => [0, 5, 7], 'className' => 'text-center'],
                 ['targets' => [7], 'orderable' => false],
@@ -96,7 +96,6 @@ class DatatablePessoas extends Definitions
             $offset = 0;
         }
 
-        //$total = $pessoasDAO->total($where);
         $registros = $pessoasDAO->getArray($where, $orderBy ?? 'pes_nome ASC', $limit, $offset);
 
         $data = [];

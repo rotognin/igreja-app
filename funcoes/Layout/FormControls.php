@@ -127,7 +127,7 @@ class FormControls
         $div_class = $attrs['div_class'] ?? '';
         $event = $attrs['event'] ?? '';
         $prop = $attrs['prop'] ?? '';
-        $sem_label = $attrs['sem_label'] ?? true;
+        $sem_label = $attrs['sem_label'] ?? false;
 
         unset($attrs['id']);
         unset($attrs['class']);
