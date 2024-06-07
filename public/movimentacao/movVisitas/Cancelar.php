@@ -38,7 +38,7 @@ class Cancelar extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">' . _('Cancelar Visita') . '</h1>',
+            '<h1 class="m-0 text-dark">Cancelar Visita</h1>',
             L::linkbutton('Voltar', 'visitas.php', 'Voltar', 'fas fa-angle-left')
         );
     }
@@ -61,13 +61,13 @@ class Cancelar extends GlobalHelper
         $vis_id = $this->request->get('vis_id', '0');
 
         if ($vis_id == '0') {
-            $this->voltarErro(_('Registro não encontrado'));
+            $this->voltarErro('Registro não encontrado');
         }
 
         $this->aVisita = $this->visitasDAO->get($vis_id);
 
         if (empty($this->aVisita)) {
-            $this->voltarErro(_('Registro não carregado'));
+            $this->voltarErro('Registro não carregado');
         }
     }
 
@@ -76,18 +76,18 @@ class Cancelar extends GlobalHelper
         $this->form->addHidden(FC::hidden('vis_id', $this->aVisita['vis_id']));
         $this->form->addHidden(FC::hidden('acao', 'cancelar'));
 
-        $campo_observacao = FC::textarea(
-            'Observações',
-            'vis_observacao',
-            $this->aVisita['vis_observacao'] ?? '',
+        $campo_relatorio = FC::textarea(
+            'Relatório de Cancelamento',
+            'vis_relatorio',
+            $this->aVisita['vis_relatorio'] ?? '',
             ['autofocus' => 'autofocus']
         );
 
         $this->form->setFields([
-            [$campo_observacao]
+            [$campo_relatorio]
         ]);
 
-        $this->form->setActions(L::submit(_('Salvar')));
+        $this->form->setActions(L::submit('Salvar'));
     }
 
     private function saidaPagina()

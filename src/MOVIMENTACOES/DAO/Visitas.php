@@ -10,23 +10,28 @@ class Visitas extends DAO
         'vis_id',
         'vis_data',
         'vis_hora',
-        'vis_observacao',
+        'vis_titulo',
+        'vis_quem',       // Quem vai receber a visita (Campo descritivo)
+        'vis_familia_id', // Se for uma família cadastrada, informar
+        'vis_descricao',  // Qual o motivo da visita, etc...
+        'vis_local',      // Na casa de quem vai receber, na igreja, outro local...
+        'vis_observacao', // Algum detalhe sobre a visita, etc
+        'vis_situacao',   // Prospecção, Agendada, Relizada, Cancelada
+        'vis_relatorio',  // Após a visita, o que houve?
+        'vis_reagendada', // Indica se a Visita teve seu dia alterado
         'vis_data_inc',
         'vis_usu_inc',
         'vis_data_alt',
         'vis_usu_alt',
         'vis_data_exc',
-        'vis_usu_exc',
-        'vis_descricao',
-        'vis_status',
-        'vis_familia_id',
-        'vis_titulo'
+        'vis_usu_exc'
     );
 
     private array $situacoes = array(
-        'A Realizar' => 'A Realizar',
-        'Realizada'  => 'Realizada',
-        'Cancelada'  => 'Cancelada'
+        'P' => 'Prospecção',
+        'A' => 'Agendada',
+        'R' => 'Realizada',
+        'C' => 'Cancelada'
     );
 
     public function __construct()
@@ -35,9 +40,9 @@ class Visitas extends DAO
         $this->default = $this->dbManager->get('default');
     }
 
-    public function getSituacoes(): array
+    public function getSituacoes(string $situacao = ''): array|string
     {
-        return $this->situacoes;
+        return ($situacao == '') ? $this->situacoes : $this->situacoes[$situacao];
     }
 
     public function get($vis_id): array
@@ -46,32 +51,16 @@ class Visitas extends DAO
         return $visitas[0] ?? [];
     }
 
-    public function total($where = [])
-    {
-        $sql = "SELECT COUNT(vis_id) AS total 
-                FROM {$this->table('igreja_db', 'visitas')} 
-                WHERE vis_usu_exc IS NULL";
-
-        if ($where) {
-            $sql .= "$where[0]";
-        }
-
-        $stmt = $this->default->prepare($sql);
-        $stmt->execute($where[1] ?? []);
-        $aRetorno = $stmt->fetchAll();
-        return $aRetorno[0]['total'];
-    }
-
     public function baseQuery($where)
     {
         $campos = implode(', ', $this->colunas);
 
-        $sql = "SELECT 
-            {$campos}, f.fam_nome
-        FROM {$this->table('igreja_db', 'visitas')} 
-        LEFT JOIN {$this->table('igreja_db', 'familias')} f ON f.fam_id = vis_familia_id 
-        WHERE vis_usu_exc IS NULL 
-        ";
+        $sql = <<<SQL
+            SELECT {$campos}, f.fam_nome 
+            FROM {$this->table('igreja_db', 'visitas')} 
+            LEFT JOIN {$this->table('igreja_db', 'familias')} f ON f.fam_id = vis_familia_id 
+            WHERE vis_usu_exc IS NULL 
+        SQL;
 
         if ($where) {
             $sql .= "$where[0]";

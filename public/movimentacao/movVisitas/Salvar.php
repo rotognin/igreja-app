@@ -13,6 +13,7 @@ class Salvar extends GlobalHelper
 
     private Visitas $visitasDAO;
     private array $campos = [];
+    private array $aVisita = [];
 
     public function __construct()
     {
@@ -24,9 +25,12 @@ class Salvar extends GlobalHelper
         $this->iniciarDAO();
 
         if (!$this->informacoesCorretas()) {
-            $this->voltarErro(_('Faltam preencher todas as informações'));
+            $this->voltarErro('Faltam preencher todas as informações');
         }
 
+        if (!$this->novoCadastro()) {
+            $this->carregarVisita();
+        }
         $this->preencherCampos();
 
         ($this->novoCadastro()) ? $this->inserirRegistro() : $this->atualizarRegistro();
@@ -39,10 +43,25 @@ class Salvar extends GlobalHelper
         $this->visitasDAO = new Visitas();
     }
 
+    private function carregarVisita()
+    {
+        $vis_id = $this->request->post('vis_id', '0');
+
+        if ($vis_id == '0') {
+            $this->voltarErro(_('Identificador não informado'));
+        }
+
+        $this->aVisita = $this->visitasDAO->get($vis_id);
+
+        if (empty($this->aVisita)) {
+            $this->voltarErro(_('Registro não existente'));
+        }
+    }
+
     private function informacoesCorretas(): bool
     {
         // Checar se vieram todas as informações necessárias
-        if (empty($this->request->post('vis_membros')) && empty($this->request->post('vis_pessoas'))) {
+        if (empty($this->request->post('vis_pessoas'))) {
             return false;
         }
 
@@ -52,12 +71,21 @@ class Salvar extends GlobalHelper
     private function preencherCampos()
     {
         $this->campos = [
-            'vis_data'       => Format::sqlDatetime($this->request->post('vis_data'), 'd/m/Y', 'Y-m-d'),
-            'vis_hora'       => $this->request->post('vis_hora'),
-            'vis_titulo'     => mb_strtoupper($this->request->post('vis_titulo')),
-            'vis_descricao'  => mb_strtoupper($this->request->post('vis_descricao')),
+            'vis_titulo'     => $this->request->post('vis_titulo'),
+            'vis_descricao'  => $this->request->post('vis_descricao'),
+            'vis_quem'       => $this->request->post('vis_quem'),
+            'vis_local'       => $this->request->post('vis_local'),
+            'vis_observacao' => $this->request->post('vis_observacao'),
             'vis_familia_id' => $this->request->post('vis_familia_id')
         ];
+
+        if ($this->request->post('vis_data', '') != '') {
+            $this->campos['vis_data'] = Format::sqlDatetime($this->request->post('vis_data'), 'd/m/Y', 'Y-m-d');
+        }
+
+        if ($this->request->post('vis_hora', '') != '') {
+            $this->campos['vis_hora'] = $this->request->post('vis_hora');
+        }
     }
 
     private function novoCadastro()
@@ -68,7 +96,7 @@ class Salvar extends GlobalHelper
     private function inserirRegistro()
     {
         $this->campos = array_merge($this->campos, [
-            'vis_status'   => 'A Realizar',
+            'vis_situacao' => ($this->request->post('vis_data', '') == '') ? 'P' : 'A',
             'vis_data_inc' => date('Y-m-d H:i:s'),
             'vis_usu_inc'  => $this->session->get('credentials.default')
         ]);
@@ -77,11 +105,9 @@ class Salvar extends GlobalHelper
 
         if ($vis_id) {
             // Gravar os integrantes da visita (trait)
-            $arrayMembros = ($this->request->post('vis_membros', '') != '') ? $this->request->post('vis_membros') : [];
             $arrayPessoas = ($this->request->post('vis_pessoas', '') != '') ? $this->request->post('vis_pessoas') : [];
 
-            $this->adicionarVisitantes($vis_id, 'Membro', $arrayMembros);
-            $this->adicionarVisitantes($vis_id, 'Pessoa', $arrayPessoas);
+            $this->adicionarVisitantes($vis_id, $arrayPessoas);
 
             $this->session->flash('success', _('Visita gravada com sucesso'));
         } else {
@@ -91,16 +117,13 @@ class Salvar extends GlobalHelper
 
     private function atualizarRegistro()
     {
-        $vis_id = $this->request->post('vis_id', '0');
-
-        if ($vis_id == '0') {
-            $this->voltarErro(_('Identificador não informado'));
-        }
-
-        $registro = $this->visitasDAO->get($vis_id);
-
-        if (empty($registro)) {
-            $this->voltarErro(_('Registro não existente'));
+        // Se a visita estiver como "Prospecção" mas for informada uma data, altetar para "Agendada"
+        if ($this->aVisita['vis_situacao'] == 'P') {
+            if ($this->request->post('vis_data', '') != '') {
+                $this->campos = array_merge($this->campos, [
+                    'vis_situacao' => 'A'
+                ]);
+            }
         }
 
         $this->campos = array_merge($this->campos, [
@@ -108,21 +131,19 @@ class Salvar extends GlobalHelper
             'vis_usu_alt' => $this->session->get('credentials.default')
         ]);
 
-        $atualizado = $this->visitasDAO->update($vis_id, $this->campos);
+        $atualizado = $this->visitasDAO->update($this->aVisita['vis_id'], $this->campos);
 
         if ($atualizado) {
             // Regravar as pessoas e membros da visita
-            $this->excluirVisitantes($vis_id);
+            $this->excluirVisitantes($this->aVisita['vis_id']);
 
-            $arrayMembros = ($this->request->post('vis_membros', '') != '') ? $this->request->post('vis_membros') : [];
             $arrayPessoas = ($this->request->post('vis_pessoas', '') != '') ? $this->request->post('vis_pessoas') : [];
 
-            $this->adicionarVisitantes($vis_id, 'Membro', $arrayMembros);
-            $this->adicionarVisitantes($vis_id, 'Pessoa', $arrayPessoas);
+            $this->adicionarVisitantes($this->aVisita['vis_id'], $arrayPessoas);
 
-            $this->session->flash('success', _('Visita atualizada com sucesso'));
+            $this->session->flash('success', 'Visita atualizada com sucesso');
         } else {
-            $this->voltarErro(_('Visita não foi atualizada'));
+            $this->voltarErro('Visita não foi atualizada');
         }
     }
 

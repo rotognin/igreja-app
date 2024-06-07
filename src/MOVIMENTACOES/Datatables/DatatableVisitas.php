@@ -19,8 +19,8 @@ class DatatableVisitas extends Definitions
             'vis_data_ini' => '',
             'vis_data_fim' => '',
             'vis_familia_id' => '',
-            'vis_status' => '',
-            'vis_periodo' => ''
+            'vis_situacao' => '',
+            'vis_titulo' => ''
         ];
 
         $script = <<<'SCRIPT'
@@ -39,14 +39,15 @@ class DatatableVisitas extends Definitions
                 ['name' => 'vis_id'],
                 ['name' => 'vis_titulo'],
                 ['name' => 'vis_familia'],
+                ['name' => 'vis_quem'],
                 ['name' => 'vis_data'],
-                ['name' => 'vis_status'],
+                ['name' => 'vis_situacao'],
                 ['name' => 'acoes']
             ],
-            'order' => [[2, 'asc']],
+            'order' => [[0, 'desc']],
             'columnDefs' => [
-                ['targets' => [0, 3, 4, 5], 'className' => 'text-center'],
-                ['targets' => [5], 'orderable' => false],
+                ['targets' => [0, 4, 5, 6], 'className' => 'text-center'],
+                ['targets' => [6], 'orderable' => false],
             ],
             'fixedHeader' => true,
             'lengthMenu' => [[10, 50, 100, -1], [10, 50, 100, 'Todos']],
@@ -65,12 +66,13 @@ class DatatableVisitas extends Definitions
 
         $table->addHeader([
             'cols' => [
-                ['value' => _('Código')],
-                ['value' => _('Título')],
-                ['value' => _('Família')],
-                ['value' => _('Data')],
-                ['value' => _('Situação')],
-                ['value' => _('Ações')]
+                ['value' => 'Código'],
+                ['value' => 'Título'],
+                ['value' => 'Família'],
+                ['value' => 'Quem receberá?'],
+                ['value' => 'Data'],
+                ['value' => 'Situação'],
+                ['value' => 'Ações']
             ],
         ]);
     }
@@ -81,10 +83,13 @@ class DatatableVisitas extends Definitions
 
         $where = ['', []];
 
-        if ($this->filters['vis_periodo'] == '1') {
+        if (!empty($this->filters['vis_data_ini'])) {
+            $data_ini = Format::sqlDatetime($this->filters['vis_data_ini'], 'd/m/Y', 'Y-m-d');
+            $data_fim = Format::sqlDatetime($this->filters['vis_data_fim'], 'd/m/Y', 'Y-m-d');
+
             $where[0] .= ' AND vis_data BETWEEN ? AND ? ';
-            $where[1][] = $this->filters['vis_data_ini'];
-            $where[1][] = $this->filters['vis_data_fim'];
+            $where[1][] = $data_ini;
+            $where[1][] = $data_fim;
         }
 
         if (!empty($this->filters['vis_familia_id'])) {
@@ -92,11 +97,9 @@ class DatatableVisitas extends Definitions
             $where[1][] = $this->filters['vis_familia_id'];
         }
 
-        if (!empty($this->filters['vis_status'])) {
-            if ($this->filters['vis_status'] != '0') {
-                $where[0] .= ' AND vis_status = ?';
-                $where[1][] = $this->filters['vis_status'];
-            }
+        if (!empty($this->filters['vis_situacao'])) {
+            $where[0] .= ' AND vis_situacao = ?';
+            $where[1][] = $this->filters['vis_situacao'];
         }
 
         if ($limit == -1) {
@@ -104,40 +107,53 @@ class DatatableVisitas extends Definitions
             $offset = 0;
         }
 
-        $total = $visitasDAO->total($where);
-        $registros = $visitasDAO->getArray($where, 'vis_data ASC', $limit, $offset);
+        $registros = $visitasDAO->getArray($where, $orderBy ?? 'vis_data ASC', $limit, $offset);
 
         $data = [];
+        $total = 0;
 
-        if ($total > 0) {
+        if (!empty($registros)) {
+            $total = $registros[0]['total'] ?? count($registros);
+
             foreach ($registros as $reg) {
                 $disabled = '';
+                $disabled_realizar = '';
+                $disabled_cancelar = '';
 
                 $buttonEditar = 'outline-primary';
                 $buttonRealizar = 'outline-primary';
-                $buttonCancelar = 'outline-secondary';
+                $buttonCancelar = 'outline-primary';
                 $buttonExcluir = 'outline-danger';
 
-                if (in_array($reg['vis_status'], ['Cancelada', 'Excluída', 'Realizada'])) {
+                if (in_array($reg['vis_situacao'], ['C', 'R'])) {
                     $disabled = ' disabled aria-disabled="true"';
                     $buttonEditar = 'outline-secondary';
                     $buttonRealizar = 'outline-secondary';
                     $buttonExcluir = 'outline-secondary';
+                    $buttonCancelar = 'outline-secondary';
+                }
+
+                if ($reg['vis_situacao'] == 'P') {
+                    $disabled_realizar = ' disabled aria-disabled="true"';
+                    $disabled_cancelar = ' disabled aria-disabled="true"';
+                    $buttonRealizar = 'outline-secondary';
+                    $buttonCancelar = 'outline-secondary';
                 }
 
                 $buttons = L::buttonGroup([
-                    L::button('', "editarVisita({$reg['vis_id']})", _('Editar Visita'), 'fas fa-edit', $buttonEditar, 'sm', $disabled),
-                    L::button('', "realizarVisita({$reg['vis_id']})", _('Realizar Visita'), 'fas fa-check', $buttonRealizar, 'sm', $disabled),
-                    L::button('', "cancelarVisita({$reg['vis_id']})", _('Cancelar Visita'), 'fas fa-comment-slash', $buttonCancelar, 'sm', $disabled),
-                    L::button('', "excluirVisita({$reg['vis_id']})", _('Excluir Visita'), 'fas fa-trash', $buttonExcluir, 'sm', $disabled)
+                    L::button('', "editarVisita({$reg['vis_id']})", 'Editar Visita', 'fas fa-edit', $buttonEditar, 'sm', $disabled),
+                    L::button('', "realizarVisita({$reg['vis_id']})", 'Realizar Visita', 'fas fa-check', $buttonRealizar, 'sm', $disabled . $disabled_realizar),
+                    L::button('', "cancelarVisita({$reg['vis_id']})", 'Cancelar Visita', 'fas fa-comment-slash', $buttonCancelar, 'sm', $disabled . $disabled_cancelar),
+                    L::button('', "excluirVisita({$reg['vis_id']})", 'Excluir Visita', 'fas fa-trash', $buttonExcluir, 'sm', $disabled)
                 ]);
 
                 $data[] = array(
                     $reg['vis_id'],
                     $reg['vis_titulo'],
                     $reg['fam_nome'],
+                    $reg['vis_quem'],
                     Format::date($reg['vis_data']) . ' ' . $reg['vis_hora'],
-                    $reg['vis_status'],
+                    $visitasDAO->getSituacoes($reg['vis_situacao']),
                     $buttons
                 );
             }

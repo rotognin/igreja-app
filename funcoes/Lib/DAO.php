@@ -75,11 +75,19 @@ class DAO
 
     public function paginate($query, $limit = 10, $offset = 0, $orderBy = 1)
     {
+        /*
         return "
             SELECT *
             FROM ($query) t 
             ORDER BY $orderBy 
             LIMIT $offset, $limit";
         //OFFSET $offset ROWS FETCH NEXT $limit ROWS ONLY";
+        */
+
+        return "
+            SELECT *, COUNT(*) OVER() as total 
+            FROM ($query) t 
+            ORDER BY $orderBy 
+            OFFSET $offset ROWS FETCH NEXT $limit ROWS ONLY";
     }
 }

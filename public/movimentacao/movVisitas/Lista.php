@@ -48,8 +48,8 @@ class Lista extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">' . _('Visitas') . '</h1>',
-            L::linkButton(_('Nova Visita'), '?posicao=form', '', 'fas fa-plus', 'primary')
+            '<h1 class="m-0 text-dark">' . 'Visitas' . '</h1>',
+            L::linkButton('Nova Visita', '?posicao=form', '', 'fas fa-plus', 'primary')
         );
     }
 
@@ -57,7 +57,7 @@ class Lista extends GlobalHelper
     {
         $this->formFiltros = new Form();
         $this->formFiltros->setTitle('<i class="fas fa-filter"></i> Filtros');
-        $this->formFiltros->setForm('action="" method="GET"');
+        $this->formFiltros->setForm('id="form-filtros" action="" method="GET"');
         $this->formFiltros->setCollapsable(true);
         $this->formFiltros->setCollapsed(count($this->request->getArray()) == 0);
         $this->formFiltros->setActions(L::submit('Filtrar', 'fas fa-filter'));
@@ -65,32 +65,108 @@ class Lista extends GlobalHelper
 
     private function montarCamposFiltros()
     {
-        $filtro_data_inicial = FC::date(_('Data inicial'), 'vis_data_ini', $this->request->get('vis_data_ini', ''));
-        $filtro_data_final = FC::date(_('Data final'), 'vis_data_fim', $this->request->get('vis_data_fim', ''));
-
-        $familias = $this->buscarFamilias();
-        $filtro_familias = FC::select2(_('Família'), 'fam_nome', $familias, $this->request->get('fam_nome', '0'));
+        $filtro_data_inicial = FC::input('Data inicial', 'vis_data_ini', $this->request->get('vis_data_ini', ''), [
+            'class' => 'form-control form-control-sm data-mask', 'div_class' => 'col-md-2'
+        ]);
+        $filtro_data_final = FC::input('Data final', 'vis_data_fim', $this->request->get('vis_data_fim', ''), [
+            'class' => 'form-control form-control-sm data-mask', 'div_class' => 'col-md-2'
+        ]);
 
         $arraySituacao = array_merge(['0' => 'Todas'], $this->visitasDAO->getSituacoes());
-        $filtro_situacao = FC::select(_('Situação da Visita'), 'vis_status', $arraySituacao, $this->request->get('vis_status', '0'));
+        $filtro_situacao = FC::select('Situação da Visita', 'vis_situacao', $arraySituacao, $this->request->get('vis_situacao', 'A'), [
+            'class' => 'form-control form-control-sm', 'div_class' => 'col-md-2'
+        ]);
 
-        $filtro_periodo = FC::switch(_('Filtrar pelo período'), 'vis_periodo', '1', $this->request->get('vis_periodo', '0') == '1', ['div_class' => 'm-0']);
+        $familias = $this->buscarFamilias();
+        $filtro_familias = FC::select2('Família', 'fam_nome', $familias, $this->request->get('fam_nome', '0'), [
+            'class' => 'form-control form-control-sm', 'div_class' => 'col-md-4'
+        ]);
 
         $this->formFiltros->setFields([
-            [$filtro_data_inicial, $filtro_data_final, $filtro_familias, $filtro_situacao],
-            [$filtro_periodo]
+            ['<div class="row">' . $filtro_data_inicial . $filtro_data_final . $filtro_situacao . $filtro_familias . '</div>']
         ]);
     }
 
     private function montarTabela()
     {
         $this->table = new Datatable(DatatableVisitas::class);
+
+        if (count($this->request->getArray()) == 0) {
+            $this->table->addFilters(['vis_situacao' => 'A']);
+        }
     }
 
     private function montarScript()
     {
         $this->script = <<<HTML
             <script>
+                $('.data-mask').mask('00/00/0000');
+                
+                $(function(){
+                    $.validator.addMethod("checarDataInicial", function(campo){
+                        if (campo == '' || campo == undefined){
+                            data_fim = $("#vis_data_fim").val();
+                            if (data_fim != ''){
+                                mensagem('Para pesquisar pelo perído, informe as duas datas');
+                                return false;
+                            }
+
+                            return true;
+                        }
+
+                        if (!dataValida(campo)){
+                            return false;
+                        }
+
+                        data_ini = campo;
+                        data_fim = $("#vis_data_fim").val();
+
+                        if (!inicioMenor(data_ini, data_fim)){
+                            mensagem('Data inicial maior que a final');
+                            return false;
+                        }
+
+                        return true;
+                    }, "Data inválida");
+
+                    $.validator.addMethod("checarDataFinal", function(campo){
+                        if (campo == '' || campo == undefined){
+                            data_ini = $("#vis_data_ini").val();
+                            if (data_ini != ''){
+                                mensagem('Para pesquisar pelo perído, informe as duas datas');
+                                return false;
+                            }
+
+                            return true;
+                        }
+
+                        if (!dataValida(campo)){
+                            return false;
+                        }
+
+                        data_ini = $("#vis_data_ini").val();
+                        data_fim = campo;
+
+                        if (!inicioMenor(data_ini, data_fim)){
+                            mensagem('Data inicial maior que a final');
+                            return false;
+                        }
+
+                        return true;
+                    }, "Data inválida");
+
+                    $('#form-filtros').validate({
+                        onfocusout: false,
+                        onkeyup: false,
+                        onclick: false,
+                        onsubmit: true,
+                        rules: {
+                            vis_data_ini: "checarDataInicial",
+                            vis_data_fim: "checarDataFinal"
+                        }
+                    });
+                });
+
                 function editarVisita(vis_id){
                     window.location.href = '?posicao=form&vis_id=' + vis_id;
                 }

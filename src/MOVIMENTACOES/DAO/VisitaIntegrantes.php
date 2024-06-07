@@ -9,9 +9,7 @@ class VisitaIntegrantes extends DAO
     private array $colunas = array(
         'vin_id',
         'vin_visita_id',
-        'vin_membro_id',
-        'vin_pessoa_id',
-        'vin_tipo'
+        'vin_pessoa_id'
     );
 
     public function __construct()
@@ -46,13 +44,15 @@ class VisitaIntegrantes extends DAO
     {
         $campos = implode(', ', $this->colunas);
 
-        $sql = "SELECT 
-            {$campos}, m.mem_nome, p.pes_nome 
-        FROM {$this->table('igreja_db', 'visita_integrantes')} 
-        LEFT JOIN {$this->table('igreja_db', 'membros')} m ON m.mem_id = vin_membro_id 
-        LEFT JOIN {$this->table('igreja_db', 'pessoas')} p ON p.pes_id = vin_pessoa_id 
-        WHERE 1=1 
-        ";
+        $sql = <<<SQL
+            SELECT {$campos}, p.pes_nome, v.vis_titulo 
+            FROM {$this->table('igreja_db', 'visita_integrantes')} 
+            LEFT JOIN {$this->table('igreja_db', 'pessoas')} p 
+                ON p.pes_id = vin_pessoa_id 
+            LEFT JOIN {$this->table('igreja_db', 'visitas')} v
+                ON v.vis_id = vin_visita_id
+            WHERE 1=1 
+        SQL;
 
         if ($where) {
             $sql .= "$where[0]";

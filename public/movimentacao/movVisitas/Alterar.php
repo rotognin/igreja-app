@@ -4,7 +4,6 @@ namespace View\Movimentacoes;
 
 use Funcoes\Lib\GlobalHelper;
 use App\MOVIMENTACOES\DAO\Visitas;
-use Funcoes\Helpers\Format;
 
 class Alterar extends GlobalHelper
 {
@@ -32,7 +31,7 @@ class Alterar extends GlobalHelper
     private function preencherCampos()
     {
         $this->campos = [
-            'vis_observacao' => $this->request->post('vis_observacao')
+            'vis_relatorio' => $this->request->post('vis_relatorio')
         ];
     }
 
@@ -41,17 +40,17 @@ class Alterar extends GlobalHelper
         $vis_id = $this->request->post('vis_id', '0');
 
         if ($vis_id == '0') {
-            $this->voltarErro(_('Identificador não informado'));
+            $this->voltarErro('Identificador não informado');
         }
 
         $registro = $this->visitasDAO->get($vis_id);
 
         if (empty($registro)) {
-            $this->voltarErro(_('Registro não existente'));
+            $this->voltarErro('Registro não existente');
         }
 
         $this->campos = array_merge($this->campos, [
-            'vis_status'   => ($this->request->post('acao') == 'cancelar') ? 'Cancelada' : 'Realizada',
+            'vis_situacao'   => ($this->request->post('acao') == 'cancelar') ? 'C' : 'R',
             'vis_data_alt' => date('Y-m-d H:i:s'),
             'vis_usu_alt' => $this->session->get('credentials.default')
         ]);
@@ -59,9 +58,9 @@ class Alterar extends GlobalHelper
         $atualizado = $this->visitasDAO->update($vis_id, $this->campos);
 
         if ($atualizado) {
-            $this->session->flash('success', _('Visita atualizada com sucesso'));
+            $this->session->flash('success', 'Visita atualizada com sucesso');
         } else {
-            $this->voltarErro(_('Visita não foi atualizada'));
+            $this->voltarErro('Visita não foi atualizada');
         }
     }
 

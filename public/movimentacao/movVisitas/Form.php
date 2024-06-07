@@ -10,13 +10,12 @@ use App\MOVIMENTACOES\DAO\Visitas;
 use Funcoes\Lib\GlobalHelper;
 use Funcoes\Helpers\Format;
 use Funcoes\Lib\Traits\TraitFamilia;
-use Funcoes\Lib\Traits\TraitMembros;
 use Funcoes\Lib\Traits\TraitPessoas;
 use Funcoes\Lib\Traits\TraitVisitaIntegrantes;
 
 class Form extends GlobalHelper
 {
-    use TraitFamilia, TraitMembros, TraitPessoas, TraitVisitaIntegrantes;
+    use TraitFamilia, TraitPessoas, TraitVisitaIntegrantes;
 
     private Visitas $visitasDAO;
     private Familias $familiasDAO;
@@ -74,7 +73,7 @@ class Form extends GlobalHelper
             $this->novo = false;
 
             if (empty($this->aVisita)) {
-                $this->session->flash('error', _('Registro não encontrado'));
+                $this->session->flash('error', 'Registro não encontrado');
                 return $this->response->back();
             }
         }
@@ -83,7 +82,7 @@ class Form extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">' . _('Cadastro de Visitas') . '</h1>',
+            '<h1 class="m-0 text-dark">Cadastro de Visita</h1>',
             L::linkbutton('Voltar', 'visitas.php', 'Voltar', 'fas fa-angle-left')
         );
     }
@@ -91,7 +90,7 @@ class Form extends GlobalHelper
     private function inicioForm()
     {
         $this->form = new Formulario();
-        $this->form->setTitle($this->novo ? _('Nova Visita') : _('Editar Visita')  . ": {$this->aVisita['vis_id']} - {$this->aVisita['vis_titulo']}");
+        $this->form->setTitle($this->novo ? 'Nova Visita' : 'Editar Visita'  . ": {$this->aVisita['vis_id']} - {$this->aVisita['vis_titulo']}");
         $this->form->setForm('id="form-visitas" action="?posicao=salvar" method="post"');
     }
 
@@ -104,43 +103,58 @@ class Form extends GlobalHelper
         $this->form->addHidden(FC::hidden('novo', ($this->novo) ? 'S' : 'N'));
 
         $campo_titulo = FC::input(
-            _('Título'),
+            'Título',
             'vis_titulo',
             $this->aVisita['vis_titulo'] ?? '',
             [
                 'div_class' => 'col-md-6',
                 'class' => 'form-control form-control-sm',
+
                 'autofocus' => 'autofocus'
             ]
         );
 
-        $campo_descricao = FC::textarea('Descrição', 'vis_descricao', $this->aVisita['vis_descricao'] ?? '');
+        $campo_descricao = FC::textarea('Descrição', 'vis_descricao', $this->aVisita['vis_descricao'] ?? '', [
+            'div_class' => 'col-md-6', 'class' => 'form-control form-control-sm', 'rows' => '3',
+        ]);
 
-        $familias = $this->buscarFamilias();
-        $campo_familias = FC::select2(_('Família'), 'vis_familia_id', $familias, $this->aVisita['vis_familia_id'] ?? '0', ['div_class' => 'col-md-4']);
+        $campo_quem = FC::input('Quem vai receber a visita?', 'vis_quem', $this->aVisita['vis_quem'] ?? '', [
+            'div_class' => 'col-md-6', 'class' => 'form-control form-control-sm',
+        ]);
 
-        $campo_data = FC::date('Data', 'vis_data', Format::date($this->aVisita['vis_data'] ?? ''), ['div_class' => 'col-md-2']);
-        $campo_hora = FC::input('Hora', 'vis_hora', $this->aVisita['vis_hora'] ?? '', ['type' => 'time', 'div_class' => 'col-md-2']);
+        $familias = $this->buscarFamilias('Selecione');
+        $campo_familias = FC::select2('Família', 'vis_familia_id', $familias, $this->aVisita['vis_familia_id'] ?? '0', [
+            'class' => 'form-control form-control-sm', 'div_class' => 'col-md-4'
+        ]);
 
-        $membros = $this->buscarMembros();
-        $campo_membros_visitantes = FC::select2(_('Membros Visitanes'), 'vis_membros[]', $membros, '', [
-            'multiple' => 'multiple',
-            'id' => 'vis_membros_select',
-            'div_class' => 'col-md-6'
+        $campo_data = FC::input('Data', 'vis_data', Format::date($this->aVisita['vis_data'] ?? ''), [
+            'div_class' => 'col-md-2', 'class' => 'form-control form-control-sm data-mask'
+        ]);
+        $campo_hora = FC::input('Hora', 'vis_hora', $this->aVisita['vis_hora'] ?? '', [
+            'div_class' => 'col-md-2', 'class' => 'form-control form-control-sm hora-mask'
+        ]);
+
+        $campo_local = FC::input('Onde será a visita?', 'vis_local', $this->aVisita['vis_local'] ?? '', [
+            'div_class' => 'col-md-6', 'class' => 'form-control form-control-sm',
         ]);
 
         $pessoas = $this->buscarPessoas();
-        $campo_pessoas_visitantes = FC::select2(_('Pessoas Visitantes'), 'vis_pessoas[]', $pessoas, '', [
+        $campo_pessoas_visitantes = FC::select2('Pessoas Visitantes', 'vis_pessoas[]', $pessoas, '', [
             'multiple' => 'multiple',
             'id' => 'vis_pessoas_select',
-            'div_class' => 'col-md-6'
+            'div_class' => 'col-md-10'
+        ]);
+
+        $campo_observacoes = FC::textarea('Observações', 'vis_observacao', $this->aVisita['vis_observacao'] ?? '', [
+            'div_class' => 'col-md-6', 'class' => 'form-control form-control-sm', 'rows' => '3',
         ]);
 
         $this->form->setFields([
-            ['<div class="row">' . $campo_titulo . $campo_familias . '</div>'],
-            [$campo_descricao],
-            ['<div class="row">' . $campo_data . $campo_hora . '</div>'],
-            ['<div class="row">' . $campo_membros_visitantes . $campo_pessoas_visitantes . '</div>']
+            ['<div class="row">' . $campo_titulo . $campo_quem . $campo_familias . '</div>'],
+            ['<div class="row">' . $campo_descricao . '</div>'],
+            ['<div class="row">' . $campo_data . $campo_hora . $campo_local . '</div>'],
+            ['<div class="row">' . $campo_pessoas_visitantes . '</div>'],
+            ['<div class="row">' . $campo_observacoes . '</div>']
         ]);
 
         $this->form->setActions(L::submit(_('Salvar')));
@@ -157,6 +171,9 @@ class Form extends GlobalHelper
     {
         $this->script = <<<HTML
             <script>
+                $('.data-mask').mask('00/00/0000');
+                $('.hora-mask').mask('00:00');
+
                 $(function(){
                     $('#form-visitas').validate({
                         rules: {
@@ -190,19 +207,13 @@ class Form extends GlobalHelper
             return false;
         }
 
-        $membros = '';
         $pessoas = '';
 
         foreach ($integrantes as $integrante) {
-            if ($integrante['vin_tipo'] == 'Membro') {
-                $membros .= $integrante['vin_membro_id'] . ', ';
-            } else {
-                $pessoas .= $integrante['vin_pessoa_id'] . ', ';
-            }
+            $pessoas .= $integrante['vin_pessoa_id'] . ', ';
         }
 
-        $addScript = "$('#vis_membros_select').val([{$membros}]).trigger('change');";
-        $addScript .= "$('#vis_pessoas_select').val([{$pessoas}]).trigger('change');";
+        $addScript = "$('#vis_pessoas_select').val([{$pessoas}]).trigger('change');";
 
         $script = <<<HTML
             <script>

@@ -23,7 +23,7 @@ trait TraitVisitaIntegrantes
         $this->visitaIntegrantesDAO->delete($vis_id);
     }
 
-    public function adicionarVisitantes(int $vis_id, string $tipo, array $visitantes)
+    public function adicionarVisitantes(int $vis_id, array $visitantes)
     {
         if (!$vis_id) {
             return false;
@@ -33,19 +33,12 @@ trait TraitVisitaIntegrantes
             return false;
         }
 
-        if (!in_array($tipo, ['Membro', 'Pessoa'])) {
-            return false;
-        }
-
-        $campoTipo = ($tipo == 'Membro') ? 'vin_membro_id' : 'vin_pessoa_id';
-
         $this->getDAOVisitaIntegrantes();
 
         foreach ($visitantes as $visitante) {
             $this->visitaIntegrantesDAO->insert([
                 'vin_visita_id' => $vis_id,
-                $campoTipo => $visitante,
-                'vin_tipo' => $tipo
+                'vin_pessoa_id' => $visitante
             ]);
         }
     }

@@ -40,36 +40,36 @@ const Toast = Swal.mixin({
     showCloseButton: true,
 });
 let toasts = [];
-$(function() {
+$(function () {
     toasts.map((toast) => {
         Toast.fire(toast);
     });
 
     $.fn.select2.defaults.set("language", {
-        errorLoading: function() {
+        errorLoading: function () {
             return "Os resultados não puderam ser carregados.";
         },
-        inputTooLong: function(e) {
+        inputTooLong: function (e) {
             var t = e.input.length - e.maximum,
                 n = "Por favor, apague " + t + " caracter";
             return t != 1 && (n += "es"), n;
         },
-        inputTooShort: function(e) {
+        inputTooShort: function (e) {
             var t = e.minimum - e.input.length,
                 n = "Por favor, insira " + t + " ou mais caracteres";
             return n;
         },
-        loadingMore: function() {
+        loadingMore: function () {
             return "Carregando mais resultados…";
         },
-        maximumSelected: function(e) {
+        maximumSelected: function (e) {
             var t = "Você só pode selecionar " + e.maximum + " ite";
             return e.maximum == 1 ? t += "m" : t += "ns", t;
         },
-        noResults: function() {
+        noResults: function () {
             return "Nenhum resultado encontrado";
         },
-        searching: function() {
+        searching: function () {
             return "Buscando…";
         },
     });
@@ -92,7 +92,7 @@ $(function() {
         }
     });
 
-    $('.nav .nav-link.active').parent().parents('.nav-item').addClass('menu-open').each(function() {
+    $('.nav .nav-link.active').parent().parents('.nav-item').addClass('menu-open').each(function () {
         $(this).find('.nav-link:first').addClass('active');
     });
 });
@@ -122,41 +122,41 @@ function mensagem(text, confirmButtonText = 'OK') {
     });
 };
 
-function validar_cnpj(cnpj){
-    function getVerificationCode1(){
+function validar_cnpj(cnpj) {
+    function getVerificationCode1() {
         var total = 0;
         var mod = 0;
         var factors = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
         var nums = this.cnpj.substr(0, 12).split('');
-        for( var i in nums){
+        for (var i in nums) {
             total += nums[i] * factors[i];
         }
         mod = total % 11;
-        return ( mod < 2) ? 0 : 11 - mod;
+        return (mod < 2) ? 0 : 11 - mod;
     }
-    
-    function getVerificationCode2(code1){
+
+    function getVerificationCode2(code1) {
         var total = 0;
         var mod = 0;
         var factors = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
         var nums = (this.cnpj.substr(0, 12) + code1).split('');
-        for( var i in nums){
+        for (var i in nums) {
             total += nums[i] * factors[i];
         }
         mod = total % 11;
-        return ( mod < 2) ? 0 : 11 - mod;
+        return (mod < 2) ? 0 : 11 - mod;
     }
-    
+
     this.cnpj = cnpj.replace(/[^0-9]/g, '');
     this.verificationCode1;
     this.verificationCode2;
-    
+
     this.verificationCode1 = this.cnpj.substr(-2, 1);
     this.verificationCode2 = this.cnpj.substr(-1, 1);
-    
+
     var code1 = getVerificationCode1();
     var code2 = getVerificationCode2(code1);
-    
+
     return ((code1 == this.verificationCode1) && (code2 == this.verificationCode2));
 };
 
@@ -176,7 +176,7 @@ function validar_cpf(cpf) {
         Resto = 0;
     }
 
-    if (Resto != parseInt(cpf.substring(9, 10)) ) {
+    if (Resto != parseInt(cpf.substring(9, 10))) {
         return false;
     }
 
@@ -196,7 +196,7 @@ function validar_cpf(cpf) {
     return true;
 }
 
-function formatar_cnpj(valor){
+function formatar_cnpj(valor) {
     valor = valor.replace(/\D/g, '');
     valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
     valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
@@ -205,7 +205,7 @@ function formatar_cnpj(valor){
     return valor;
 }
 
-function formatar_cpf(valor){
+function formatar_cpf(valor) {
     valor = valor.replace(/\D/g, '');
     valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
     valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
@@ -213,7 +213,7 @@ function formatar_cpf(valor){
     return valor;
 }
 
-function formatar_cep(valor){
+function formatar_cep(valor) {
     valor = valor.toString();
     valor = valor.replace(/\D/g, '');
     valor = valor.replace(/(\d{5})(\d)/, '$1-$2')
@@ -221,24 +221,24 @@ function formatar_cep(valor){
     return valor;
 }
 
-function consultar_cep(cep){
+function consultar_cep(cep) {
     cep = cep.replace(/\D/g, '');
-    if (cep.length != 8){
+    if (cep.length != 8) {
         return false;
     }
 
-    $.ajax({url: 'geral/endereco/consulta.php?cep=' + cep})
-        .done(function(data){
-            var json  = data.slice(39);
+    $.ajax({ url: 'geral/endereco/consulta.php?cep=' + cep })
+        .done(function (data) {
+            var json = data.slice(39);
             var dados = JSON.parse(json);
 
             // Checar se deu erro
-            if ('erro' in dados){
+            if ('erro' in dados) {
                 alert('Erro: ' + dados.mensagem);
                 return false;
             }
 
-            if (dados.cidade == ''){
+            if (dados.cidade == '') {
                 return false;
             }
 
@@ -251,15 +251,15 @@ function consultar_cep(cep){
             $("#end_pais").val(dados.pais);
             $('input[name="end_cidade_ibge"]').val(dados.ibge);
             $('input[name="end_cidade_gia"]').val(dados.gia);
-            
-            if (dados.logradouro !== ''){
+
+            if (dados.logradouro !== '') {
                 $("#end_numero").focus();
             }
         });
 }
 
-function consultarTipoDocumento(tipo){
-    if (isNaN(tipo)){
+function consultarTipoDocumento(tipo) {
+    if (isNaN(tipo)) {
         return false;
     }
 
@@ -267,28 +267,28 @@ function consultarTipoDocumento(tipo){
     var frase = '<i>Aguarde...</i>';
     $("#info_arquivo").html(frase);
 
-    $.ajax({url: '../xhr.php?c1=cadastro&c2=geral&c3=documento&arquivo=consulta&tip_id=' + tipo})
-        .done(function(data){
+    $.ajax({ url: '../xhr.php?c1=cadastro&c2=geral&c3=documento&arquivo=consulta&tip_id=' + tipo })
+        .done(function (data) {
             var dados = JSON.parse(data);
 
             // Checar se deu erro
-            if ('erro' in dados){
+            if ('erro' in dados) {
                 alert('Erro: ' + dados.erro);
                 return false;
             }
 
-            var versionar = (dados.versionar == 'S') ? ' - Com versionamento.' : ' - Sem versionamento.' ;
+            var versionar = (dados.versionar == 'S') ? ' - Com versionamento.' : ' - Sem versionamento.';
 
             var frase = '';
 
-            if (dados.extensoes !== ''){
+            if (dados.extensoes !== '') {
                 frase += 'Extensões permitidas: ' + dados.extensoes;
             }
-            
-            if (parseInt(dados.tamanho) > 0){
+
+            if (parseInt(dados.tamanho) > 0) {
                 frase += '. Tamanho máximo: ' + dados.tamanho + ' MB';
             }
-            
+
             frase += versionar;
 
             $("#info_arquivo").html(frase);
@@ -298,8 +298,8 @@ function consultarTipoDocumento(tipo){
         });
 }
 
-function buscarDocumento(doc_id = ''){
-    if (doc_id == ''){
+function buscarDocumento(doc_id = '') {
+    if (doc_id == '') {
         return false;
     }
 
@@ -308,47 +308,47 @@ function buscarDocumento(doc_id = ''){
     window.open(url, '_blank').focus();
 }
 
-function buscarDescricaoCondicaoPagto(cond_id, campo){
+function buscarDescricaoCondicaoPagto(cond_id, campo) {
     var descricao = '';
 
     const url = '../xhr.php?c1=cadastro&c2=cadFornecedor&arquivo=consulta&cond_id=' + cond_id;
 
-    $.ajax({url})
-        .done(function(data){
+    $.ajax({ url })
+        .done(function (data) {
             descricao = data;
             $('#' + campo).val(descricao);
         });
 }
 
-function buscarCidadesEstado(estado, campo, cidade_sel){
+function buscarCidadesEstado(estado, campo, cidade_sel) {
     const url = '../../xhr.php?c1=cadastro&c2=parametros&c3=cadFrete&arquivo=consultaCidades&estado=' + estado;
 
-    $.ajax({url})
-        .done(function(data){
+    $.ajax({ url })
+        .done(function (data) {
             const dados = JSON.parse(data);
 
             $('#' + campo).empty();
 
-            if (Object.keys(dados).length == 0){
+            if (Object.keys(dados).length == 0) {
                 $('#' + campo).prop('disabled', true);
                 return false;
             }
 
             var toAppend = '<option value="0" selected>&nbsp;</option>';
 
-            $.each(dados, function(i, obj){
+            $.each(dados, function (i, obj) {
                 toAppend += '<option value=' + obj.id + '>' + obj.nome + '</option>';
             });
 
             $('#' + campo).append(toAppend).prop('disabled', false);
 
-            if (cidade_sel > 0){
+            if (cidade_sel > 0) {
                 $('#' + campo).val(cidade_sel).change();
             }
         });
 }
 
-function displayOverlay(mensagem){
+function displayOverlay(mensagem) {
     $("<table id='overlay'><tbody><tr><td>" + mensagem + "</td></tr></tbody></table>").css({
         "position": "fixed",
         "top": "0px",
@@ -366,8 +366,68 @@ function displayOverlay(mensagem){
     }).appendTo("body");
 }
 
-$(function(){
-    $('form').submit(function(){
+/*
+$(function () {
+    $('form').submit(function () {
         displayOverlay('Aguarde...');
     });
 });
+*/
+
+function dataValida(data) {
+    if (data == '') {
+        return true;
+    }
+
+    var arrData = data.split('/');
+    if (arrData.length != 3) {
+        return false;
+    }
+
+    var dia = arrData[0];
+    var mes = arrData[1];
+    var ano = arrData[2];
+
+    if (dia > 31 || mes > 12 || ano > 2099) {
+        return false;
+    }
+
+    if (mes == 4 || mes == 6 || mes == 9 || mes == 11) {
+        if (dia > 30) {
+            return false;
+        }
+    }
+
+    if (mes == 2) {
+        if ((ano % 4) != 0) {
+            if (dia > 28) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// Comparar duas datas. A que deve ser menor e a que deve ser maior
+// dd/mm/yyyy
+function inicioMenor(menor, maior) {
+    if (!dataValida(menor) || menor == '') {
+        return false;
+    }
+
+    if (!dataValida(maior) || maior == '') {
+        return false;
+    }
+
+    var arrDataMenor = menor.split('/');
+    var arrDataMaior = maior.split('/');
+
+    var dtMenor = arrDataMenor[2] + '-' + arrDataMenor[1] + '-' + arrDataMenor[0];
+    var dtMaior = arrDataMaior[2] + '-' + arrDataMaior[1] + '-' + arrDataMaior[0];
+
+    var dataMenor = new Date(dtMenor);
+    var dataMaior = new Date(dtMaior);
+
+    return (dataMenor <= dataMaior);
+}

@@ -73,19 +73,21 @@ class FormControls
     {
         $id = $attrs['id'] ?? $name;
         $type = $attrs['type'] ?? 'text';
-        $class = $attrs['class'] ?? 'form-control';
+        $class = $attrs['class'] ?? 'form-control form-control-sm';
         $rows = $attrs['rows'] ?? '3';
-        $style = (isset($attrs['style'])) ? 'style=' . $attrs['style'] : '';
+        $style = (isset($attrs['style'])) ? 'style="' . $attrs['style'] . '"' : '';
+        $div_class = $attrs['div_class'] ?? '';
 
         unset($attrs['id']);
         unset($attrs['type']);
         unset($attrs['class']);
         unset($attrs['rows']);
         unset($attrs['style']);
+        unset($attrs['div_class']);
 
         $attrs = HTML::attrs($attrs);
         return <<<HTML
-        <div class="form-group">
+        <div class="form-group $div_class">
             <label for="$id">$label</label>
             <textarea name="$name" id="$id" class="$class" rows="$rows" $attrs $style>$value</textarea>
         </div>
