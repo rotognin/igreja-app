@@ -8,7 +8,8 @@
             "View\\": "public/",
             "View\\Cadastro\\": "public/cadastro/",
             "View\\Movimentacao\\": "public/movimentacao/",
-            "View\\Relatorio\\": "public/relatorio/"
+            "View\\Relatorio\\": "public/relatorio/",
+            "View\\Patrinonio\\": "public/patrimonio/"
         }
     },
     "authors": [

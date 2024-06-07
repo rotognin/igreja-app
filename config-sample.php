@@ -19,6 +19,12 @@ return [
             'db_suffix' => '_dev',
         ],
     ],
+    'auth' => [
+        'default' => [
+            'user_class' => \App\SGC\Usuario::class,
+            'login_page' => '/sgc/login.php',
+        ]
+    ],
     'folders' => [
         'upload' => '/upload',
         'temp' => '/temp'

@@ -14,8 +14,8 @@ $activeUser = $authManager->enforce('default');
 
 $menu = Menu::loadFromRequest($request);
 if (!$menu) {
-    $session->flash('warning', _('Programa inativo'));
+    $session->flash('warning', 'Programa inativo');
     $response->back();
 }
-$response->checkAction($menu['aca_acao'], _('Você não tem permissão para acessar esta página'));
+$response->checkAction($menu['aca_acao'], 'Você não tem permissão para acessar esta página');
 LogPrograma::log($menu, $activeUser);
