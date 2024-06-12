@@ -88,14 +88,14 @@ class Layout
             HTML;
     }
 
-    public static function submit($text, $icon = 'fas fa-check', $type = 'primary')
+    public static function submit($text, $icon = 'fas fa-check', $type = 'primary', $size = 'sm')
     {
         if (!empty($icon)) {
             $icon = "<i class=\"$icon\"></i>";
         }
         return
             <<<HTML
-            <button class="btn btn-$type" type="submit">
+            <button class="btn btn-$type btn-$size" type="submit">
                 $icon
                 $text 
             </button>

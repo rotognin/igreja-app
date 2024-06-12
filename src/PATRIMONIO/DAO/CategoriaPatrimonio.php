@@ -57,6 +57,19 @@ class CategoriaPatrimonio extends DAO
         return $stmt->fetchAll();
     }
 
+    public function montarArray(array $antes = []): array
+    {
+        $array = $antes;
+
+        $categorias = $this->getArray([" AND cpa_ativo = ?", ["S"]]);
+
+        foreach ($categorias as $cat) {
+            $array[$cat['cpa_id']] = $cat['cpa_titulo'];
+        }
+
+        return $array;
+    }
+
     public function insert(array $record): int
     {
         [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'categoria_patrimonio'), $record);
@@ -73,6 +86,14 @@ class CategoriaPatrimonio extends DAO
 
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
+        return $stmt->rowCount();
+    }
+
+    public function delete($cpa_id)
+    {
+        $sql = "DELETE FROM {$this->table('igreja_db', 'categoria_patrimonio')} WHERE cpa_id = ?";
+        $stmt = $this->default->prepare($sql);
+        $stmt->execute([$cpa_id]);
         return $stmt->rowCount();
     }
 }
