@@ -25,13 +25,48 @@ class Patrimonio extends DAO
         'pat_quantidade',
         'pat_conservacao',
         'pat_usu_responsavel',
-        'pat_ativo'
+        'pat_ativo',
+        'pat_data_hora_cadastro',
+        'pat_usu_cadastro'
+    );
+
+    private array $tipoEntrada = array(
+        'P' => 'Pré-existente',
+        'C' => 'Compra',
+        'D' => 'Doação',
+        'E' => 'Empréstimo',
+        'T' => 'Troca',
+        'A' => 'Apropriação'
+    );
+
+    private array $conservacao = array(
+        '0' => '0 - Não se aplica',
+        '1' => '1 - Horrível',
+        '2' => '2',
+        '3' => '3',
+        '4' => '4',
+        '5' => '5 - Moderado',
+        '6' => '6',
+        '7' => '7',
+        '8' => '8',
+        '9' => '9',
+        '10' => '10 - Ótimo'
     );
 
     public function __construct()
     {
         parent::__construct();
         $this->default = $this->dbManager->get('default');
+    }
+
+    public function getTipoEntrada(string $tipo = ''): array|string
+    {
+        return ($tipo == '') ? $this->tipoEntrada : $this->tipoEntrada[$tipo];
+    }
+
+    public function getConservacao(string $conservacao = ''): array|string
+    {
+        return ($conservacao == '') ? $this->conservacao : $this->conservacao[$conservacao];
     }
 
     public function get($pat_id): array
@@ -51,10 +86,12 @@ class Patrimonio extends DAO
         $sql = <<<SQL
                 SELECT 
                     {$campos},
-                    c.cpa_titulo
+                    c.cpa_titulo, u.usu_nome
                 FROM {$this->table('igreja_db', 'patrimonio')} p
                 LEFT JOIN {$this->table('igreja_db', 'categoria_patrimonio')} c
                     ON c.cpa_id = p.pat_categoria_id
+                LEFT JOIN {$this->table('igreja_db', 'usuario')} u 
+                    ON u.usu_login = p.pat_usu_responsavel
                 WHERE p.pat_ativo = 'S' 
         SQL;
 

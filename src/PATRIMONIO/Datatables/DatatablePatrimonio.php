@@ -38,12 +38,13 @@ class DatatablePatrimonio extends Definitions
                 ['name' => 'cat_titulo'],
                 ['name' => 'pat_quantidade'],
                 ['name' => 'pat_conservacao'],
+                ['name' => 'pat_usu_responsavel'],
                 ['name' => 'acoes']
             ],
             'order' => [[0, 'asc']],
             'columnDefs' => [
-                ['targets' => [0, 4, 5, 6], 'className' => 'text-center'],
-                ['targets' => [6], 'orderable' => false],
+                ['targets' => [0, 4, 5, 6, 7], 'className' => 'text-center'],
+                ['targets' => [7], 'orderable' => false],
             ],
             'fixedHeader' => true,
             'lengthMenu' => [[10, 50, 100, -1], [10, 50, 100, 'Todos']],
@@ -68,6 +69,7 @@ class DatatablePatrimonio extends Definitions
                 ['value' => 'Categoria', 'attr' => ['class' => 'text-center']],
                 ['value' => 'Quantidade', 'attr' => ['class' => 'text-center']],
                 ['value' => 'Conservação', 'attr' => ['class' => 'text-center']],
+                ['value' => 'Responsável', 'attr' => ['class' => 'text-center']],
                 ['value' => 'Ações', 'attr' => ['class' => 'text-center']]
             ],
         ]);
@@ -105,7 +107,7 @@ class DatatablePatrimonio extends Definitions
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
                     L::linkButton('', "?posicao=form&pat_id={$reg['pat_id']}", 'Editar Patrimônio', 'fas fa-edit', 'outline-secondary', 'sm'),
-                    L::button('', "saida({$reg['pat_id']})", 'Saída de Patrimônio', 'fas fa-sugn-out-alt', 'outline-secondary', 'sm'),
+                    L::button('', "saida({$reg['pat_id']})", 'Saída de Patrimônio', 'fas fa-sign-out-alt', 'outline-secondary', 'sm'),
                     L::button('', "historico({$reg['pat_id']})", 'Histórico do Patrimônio', 'fas fa-file-alt', 'outline-danger', 'sm')
                 ]);
 
@@ -113,9 +115,10 @@ class DatatablePatrimonio extends Definitions
                     $reg['pat_id'],
                     $reg['pat_descricao'],
                     $reg['pat_marca'],
-                    $reg['cat_titulo'],
+                    $reg['cpa_titulo'],
                     $reg['pat_quantidade'],
-                    $reg['pat_conservacao'],
+                    $patrimonioDAO->getConservacao($reg['pat_conservacao']),
+                    $reg['usu_nome'],
                     $buttons
                 );
             }

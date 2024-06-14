@@ -23,6 +23,7 @@ if (!$edit) {
             'usu_login' => $usu_login,
             'usu_senha' => SGCUsuario::hashPassword($request->post('usu_senha')),
             'usu_ativo' => $request->post('usu_ativo', 'N'),
+            'usu_nome'  => $usu_login,
             'usu_provedor_auth' => 'interno',
         ];
     } else {

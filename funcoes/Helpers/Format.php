@@ -84,4 +84,16 @@ class Format
         $nNovoNumero = str_repeat("0", $nDigitos - strlen($nNumero));
         return $nNovoNumero . $nNumero;
     }
+
+    public static function ajustarValor($valor = '')
+    {
+        if ($valor == '') {
+            return $valor;
+        }
+
+        $valor = str_replace('.', '', $valor);
+        $valor = str_replace(',', '.', $valor);
+
+        return $valor;
+    }
 }

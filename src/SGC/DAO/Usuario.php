@@ -59,9 +59,9 @@ class Usuario extends DAO
             , ue.emp_codigo,
             e.emp_nome
         FROM {$this->table('igreja_db', 'usuario')} u
-        INNER JOIN {$this->table('igreja_db', 'usuario_empresa')} ue 
+        LEFT JOIN {$this->table('igreja_db', 'usuario_empresa')} ue 
             ON ue.usu_login = u.usu_login AND  ue.emp_padrao = 'S'
-        INNER JOIN {$this->table('igreja_db', 'empresa')} e 
+        LEFT JOIN {$this->table('igreja_db', 'empresa')} e 
             ON e.emp_codigo = ue.emp_codigo
         WHERE 1=1";
 
@@ -84,6 +84,19 @@ class Usuario extends DAO
         $stmt = $this->default->prepare($query);
         $stmt->execute($where[1] ?? []);
         return $stmt->fetchAll();
+    }
+
+    public function montarArray(array $antes = []): array
+    {
+        $array = $antes;
+
+        $aUsuarios = $this->getArray([' AND usu_ativo = ?', ['S']]);
+
+        foreach ($aUsuarios as $usu) {
+            $array[$usu['usu_login']] = $usu['usu_nome'];
+        }
+
+        return $array;
     }
 
     public function insert(array $record): string
