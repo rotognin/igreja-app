@@ -106,9 +106,9 @@ class DatatablePatrimonio extends Definitions
 
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
-                    L::linkButton('', "?posicao=form&pat_id={$reg['pat_id']}", 'Editar Patrimônio', 'fas fa-edit', 'outline-secondary', 'sm'),
-                    L::button('', "saida({$reg['pat_id']})", 'Saída de Patrimônio', 'fas fa-sign-out-alt', 'outline-secondary', 'sm'),
-                    L::button('', "historico({$reg['pat_id']})", 'Histórico do Patrimônio', 'fas fa-file-alt', 'outline-danger', 'sm')
+                    L::linkButton('', "?posicao=form&pat_id={$reg['pat_id']}", 'Editar Patrimônio', 'fas fa-edit', 'outline-primary', 'sm'),
+                    L::button('', "saida({$reg['pat_id']})", 'Saída de Patrimônio', 'fas fa-sign-out-alt', 'outline-info', 'sm'),
+                    L::button('', "historico({$reg['pat_id']})", 'Histórico do Patrimônio', 'fas fa-file-alt', 'outline-success', 'sm')
                 ]);
 
                 $data[] = array(
