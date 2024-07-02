@@ -4,11 +4,20 @@ namespace App\MINISTERIOS\MUSICA\DAO;
 
 use Funcoes\Lib\DAO;
 
-class Categorias extends DAO
+class Musicas extends DAO
 {
     private array $colunas = array(
-        'cam_id',
-        'cam_descricao'
+        'mus_id',
+        'mus_nome',
+        'mus_artista',
+        'mus_link',
+        'mus_situacao',
+        'mus_categoria_id'
+    );
+
+    private array $situacao = array(
+        'A' => 'Ativa',
+        'I' => 'Inativa'
     );
 
     public function __construct()
@@ -17,9 +26,14 @@ class Categorias extends DAO
         $this->default = $this->dbManager->get('default');
     }
 
-    public function get($cam_id): array
+    public function getSituacao(string $situacao = ''): array|string
     {
-        $registros = $this->getArray(["AND cam_id = ?", [$cam_id]]);
+        return ($situacao == '') ? $this->situacao : $this->situacao[$situacao];
+    }
+
+    public function get($mus_id): array
+    {
+        $registros = $this->getArray(["AND mus_id = ?", [$mus_id]]);
         return $registros[0] ?? [];
     }
 
@@ -27,8 +41,10 @@ class Categorias extends DAO
     {
         $campos = implode(', ', $this->colunas);
 
-        $sql = "SELECT {$campos}
-            FROM {$this->table('igreja_db', 'categoria_musica')}
+        $sql = "SELECT {$campos}, cam_id, cam_descricao
+            FROM {$this->table('igreja_db', 'musicas')}
+            LEFT JOIN {$this->table('igreja_db', 'categoria_musica')}
+                ON mus_categoria_id = cam_id
             WHERE 1=1  
         ";
 
@@ -54,45 +70,22 @@ class Categorias extends DAO
         return $stmt->fetchAll();
     }
 
-    public function montarArray(array $antes = []): array
-    {
-        $array = $antes;
-
-        $registros = $this->getArray();
-
-        if (!empty($registros)) {
-            foreach ($registros as $reg) {
-                $array[$reg['cam_id']] = $reg['cam_descricao'];
-            }
-        }
-
-        return $array;
-    }
-
     public function insert(array $record): int
     {
-        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'categoria_musica'), $record);
+        [$sql, $args] = $this->preparedInsert($this->table('igreja_db', 'musicas'), $record);
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
         return $this->default->lastInsertId();
     }
 
-    public function update(string $cam_id, array $record): int
+    public function update(string $mus_id, array $record): int
     {
-        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'categoria_musica'), $record);
-        $sql .= " WHERE cam_id = ?";
-        $args[] = $cam_id;
+        [$sql, $args] = $this->preparedUpdate($this->table('igreja_db', 'musicas'), $record);
+        $sql .= " WHERE mus_id = ?";
+        $args[] = $mus_id;
 
         $stmt = $this->default->prepare($sql);
         $stmt->execute($args);
-        return $stmt->rowCount();
-    }
-
-    public function delete($cam_id)
-    {
-        $sql = "DELETE FROM {$this->table('igreja_db', 'categoria_musica')} WHERE cam_id = ?";
-        $stmt = $this->default->prepare($sql);
-        $stmt->execute([$cam_id]);
         return $stmt->rowCount();
     }
 }

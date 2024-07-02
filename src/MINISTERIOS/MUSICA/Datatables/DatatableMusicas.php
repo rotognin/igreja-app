@@ -2,13 +2,12 @@
 
 namespace App\MINISTERIOS\MUSICA\Datatables;
 
-use App\MINISTERIOS\MUSICA\DAO\Categorias;
 use App\MINISTERIOS\MUSICA\DAO\Musicas;
 use Funcoes\Layout\Datatable;
 use Funcoes\Lib\Datatables\Definitions;
 use Funcoes\Layout\Layout as L;
 
-class DatatableCategorias extends Definitions
+class DatatableMusicas extends Definitions
 {
     public function __construct($tableID = "")
     {
@@ -16,7 +15,9 @@ class DatatableCategorias extends Definitions
 
         //Definição de filtros e valores padrão
         $this->filters = [
-            'cam_descricao' => ''
+            'mus_nome' => '',
+            'mus_situacao' => '',
+            'mus_categoria_id' => ''
         ];
 
         $script = <<<'SCRIPT'
@@ -32,14 +33,17 @@ class DatatableCategorias extends Definitions
         //Definições das opções do datatable dando merge com as opções padrão
         $this->setOptions([
             'columns' => [
-                ['name' => 'cam_id'],
-                ['name' => 'cam_descricao'],
+                ['name' => 'mus_id'],
+                ['name' => 'mus_nome'],
+                ['name' => 'mus_artista'],
+                ['name' => 'mus_categoria_id'],
+                ['name' => 'mus_situacao'],
                 ['name' => 'acoes'],
             ],
             'order' => [[0, 'asc']],
             'columnDefs' => [
-                ['targets' => [0, 2], 'className' => 'text-center'],
-                ['targets' => [2], 'orderable' => false],
+                ['targets' => [0, 4, 5], 'className' => 'text-center'],
+                ['targets' => [5], 'orderable' => false],
             ],
             'fixedHeader' => true,
             'lengthMenu' => [[10, 50, 100, -1], [10, 50, 100, 'Todos']],
@@ -52,33 +56,49 @@ class DatatableCategorias extends Definitions
 
     public function tableConfig(Datatable $table)
     {
-        $table->setAttrs(['id' => 'tabela-categorias']);
+        $table->setAttrs(['id' => 'tabela-musicas']);
         $table->setSize('sm');
         $table->setFooter(false);
 
         $table->addHeader([
             'cols' => [
-                ['value' => 'Código', 'attrs' => ['class' => 'text-center col-md-1']],
-                ['value' => 'Descrição', 'attrs' => ['class' => 'text-center col-md-9']],
-                ['value' => 'Ações', 'attrs' => ['class' => 'text-center col-md-2']]
+                ['value' => 'Código', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Nome', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Artista', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Categoria', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Situação', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Ações', 'attrs' => ['class' => 'text-center']]
             ],
         ]);
     }
 
     public function getData($limit, $offset, $orderBy)
     {
-        $categoriasDAO = new Categorias();
         $musicasDAO = new Musicas();
 
         $where = ['', []];
+
+        if ($this->filters['mus_nome'] != '') {
+            $where[0] .= ' AND mus_nome LIKE ?';
+            $where[1][] = '%' . $this->filters['mus_nome'] . '%';
+        }
+
+        if ($this->filters['mus_situacao'] != 'T') {
+            $where[0] .= ' AND mus_situacao = ?';
+            $where[1][] = $this->filters['mus_situacao'];
+        }
+
+        if ($this->filters['mus_categoria_id'] != '') {
+            $where[0] .= ' AND mus_categoria_id = ?';
+            $where[1][] = $this->filters['mus_categoria_id'];
+        }
 
         if ($limit == -1) {
             $limit = 0;
             $offset = 0;
         }
 
-        //$total = $familiasDAO->total($where);
-        $registros = $categoriasDAO->getArray($where, $orderBy ?? ' cam_id ASC ', $limit, $offset);
+        $registros = $musicasDAO->getArray($where, $orderBy ?? ' mus_id ASC ', $limit, $offset);
 
         $data = [];
         $total = 0;
@@ -87,27 +107,17 @@ class DatatableCategorias extends Definitions
             $total = $registros[0]['total'] ?? count($registros);
 
             foreach ($registros as $reg) {
-                $attrs = '';
-
-                // Checar se tem alguma música com a categoria
-                $where = array('');
-                $where[0] = ' AND mus_categoria_id = ?';
-                $where[1][] = $reg['cam_id'];
-
-                $regMusicas = $musicasDAO->getArray($where);
-
-                if (!empty($regMusicas)) {
-                    $attrs = ' disabled aria-disabled="true"';
-                }
-
                 $buttons = L::buttonGroup([
-                    L::linkButton('', "?posicao=form&cam_id={$reg['cam_id']}", 'Editar Categoria', 'fas fa-edit', 'outline-info', 'sm'),
-                    L::button('', "excluirCategoria({$reg['cam_id']})", 'Excluir Categoria', 'fas fa-trash', 'outline-danger', 'sm', $attrs)
+                    L::linkButton('', "?posicao=form&mus_id={$reg['mus_id']}", 'Editar Música', 'fas fa-edit', 'outline-info', 'sm'),
+                    L::button('', "abrir('{$reg['mus_link']}')", 'Abrir Música', 'fas fa-play-circle', 'outline-success', 'sm')
                 ]);
 
                 $data[] = array(
-                    $reg['cam_id'],
+                    $reg['mus_id'],
+                    $reg['mus_nome'],
+                    $reg['mus_artista'],
                     $reg['cam_descricao'],
+                    $musicasDAO->getSituacao($reg['mus_situacao']),
                     $buttons
                 );
             }
