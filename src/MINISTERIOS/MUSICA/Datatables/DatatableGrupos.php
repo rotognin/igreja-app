@@ -2,12 +2,12 @@
 
 namespace App\MINISTERIOS\MUSICA\Datatables;
 
-use App\MINISTERIOS\MUSICA\DAO\Musicas;
+use App\MINISTERIOS\MUSICA\DAO\Grupos;
 use Funcoes\Layout\Datatable;
 use Funcoes\Lib\Datatables\Definitions;
 use Funcoes\Layout\Layout as L;
 
-class DatatableMusicas extends Definitions
+class DatatableGrupos extends Definitions
 {
     public function __construct($tableID = "")
     {
@@ -15,9 +15,8 @@ class DatatableMusicas extends Definitions
 
         //Definição de filtros e valores padrão
         $this->filters = [
-            'mus_nome' => '',
-            'mus_situacao' => '',
-            'mus_categoria_id' => ''
+            'gru_nome' => '',
+            'gru_situacao' => ''
         ];
 
         $script = <<<'SCRIPT'
@@ -33,17 +32,16 @@ class DatatableMusicas extends Definitions
         //Definições das opções do datatable dando merge com as opções padrão
         $this->setOptions([
             'columns' => [
-                ['name' => 'mus_id'],
-                ['name' => 'mus_nome'],
-                ['name' => 'mus_artista'],
-                ['name' => 'mus_categoria_id'],
-                ['name' => 'mus_situacao'],
+                ['name' => 'gru_id'],
+                ['name' => 'gru_nome'],
+                ['name' => 'gru_sigla'],
+                ['name' => 'gru_situacao'],
                 ['name' => 'acoes'],
             ],
             'order' => [[0, 'asc']],
             'columnDefs' => [
-                ['targets' => [0, 4, 5], 'className' => 'text-center'],
-                ['targets' => [5], 'orderable' => false],
+                ['targets' => [0, 2, 3, 4], 'className' => 'text-center'],
+                ['targets' => [4], 'orderable' => false],
             ],
             'fixedHeader' => true,
             'lengthMenu' => [[10, 50, 100, -1], [10, 50, 100, 'Todos']],
@@ -56,7 +54,7 @@ class DatatableMusicas extends Definitions
 
     public function tableConfig(Datatable $table)
     {
-        $table->setAttrs(['id' => 'tabela-musicas']);
+        $table->setAttrs(['id' => 'tabela-grupos']);
         $table->setSize('sm');
         $table->setFooter(false);
 
@@ -64,8 +62,7 @@ class DatatableMusicas extends Definitions
             'cols' => [
                 ['value' => 'Código', 'attrs' => ['class' => 'text-center']],
                 ['value' => 'Nome', 'attrs' => ['class' => 'text-center']],
-                ['value' => 'Artista', 'attrs' => ['class' => 'text-center']],
-                ['value' => 'Categoria', 'attrs' => ['class' => 'text-center']],
+                ['value' => 'Sigla', 'attrs' => ['class' => 'text-center']],
                 ['value' => 'Situação', 'attrs' => ['class' => 'text-center']],
                 ['value' => 'Ações', 'attrs' => ['class' => 'text-center']]
             ],
@@ -74,23 +71,18 @@ class DatatableMusicas extends Definitions
 
     public function getData($limit, $offset, $orderBy)
     {
-        $musicasDAO = new Musicas();
+        $gruposDAO = new Grupos();
 
         $where = ['', []];
 
-        if ($this->filters['mus_nome'] != '') {
-            $where[0] .= ' AND mus_nome LIKE ?';
-            $where[1][] = '%' . $this->filters['mus_nome'] . '%';
+        if ($this->filters['gru_nome'] != '') {
+            $where[0] .= ' AND gru_nome LIKE ?';
+            $where[1][] = '%' . $this->filters['gru_nome'] . '%';
         }
 
-        if ($this->filters['mus_situacao'] != 'T') {
-            $where[0] .= ' AND mus_situacao = ?';
-            $where[1][] = $this->filters['mus_situacao'];
-        }
-
-        if ($this->filters['mus_categoria_id'] != '') {
-            $where[0] .= ' AND mus_categoria_id = ?';
-            $where[1][] = $this->filters['mus_categoria_id'];
+        if ($this->filters['gru_situacao'] != 'T') {
+            $where[0] .= ' AND gru_situacao = ?';
+            $where[1][] = $this->filters['gru_situacao'];
         }
 
         if ($limit == -1) {
@@ -98,7 +90,7 @@ class DatatableMusicas extends Definitions
             $offset = 0;
         }
 
-        $registros = $musicasDAO->getArray($where, $orderBy ?? ' mus_id ASC ', $limit, $offset);
+        $registros = $gruposDAO->getArray($where, $orderBy ?? ' gru_id ASC ', $limit, $offset);
 
         $data = [];
         $total = 0;
@@ -108,17 +100,16 @@ class DatatableMusicas extends Definitions
 
             foreach ($registros as $reg) {
                 $buttons = L::buttonGroup([
-                    L::linkButton('', "?posicao=form&mus_id={$reg['mus_id']}", 'Editar Música', 'fas fa-edit', 'outline-info', 'sm'),
-                    L::linkButton('', "?posicao=anexos&mus_id={$reg['mus_id']}", 'Anexos', 'fas fa-file-alt', 'outline-warning', 'sm'),
-                    L::button('', "abrir('{$reg['mus_link']}')", 'Abrir Música', 'fas fa-play-circle', 'outline-success', 'sm')
+                    L::linkButton('', "?posicao=form&gru_id={$reg['gru_id']}", 'Editar Grupo', 'fas fa-edit', 'outline-info', 'sm'),
+                    L::linkButton('', "?posicao=composicao&gru_id={$reg['gru_id']}", 'Composição', 'fas fa-users', 'outline-success', 'sm'),
+                    L::button('', "excluir('{$reg['gru_id']}')", 'Excluir Grupo', 'fas fa-trash', 'outline-danger', 'sm')
                 ]);
 
                 $data[] = array(
-                    $reg['mus_id'],
-                    $reg['mus_nome'],
-                    $reg['mus_artista'],
-                    $reg['cam_descricao'],
-                    $musicasDAO->getSituacao($reg['mus_situacao']),
+                    $reg['gru_id'],
+                    $reg['gru_nome'],
+                    $reg['gru_sigla'],
+                    $gruposDAO->getSituacao($reg['gru_situacao']),
                     $buttons
                 );
             }

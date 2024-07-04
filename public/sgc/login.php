@@ -95,8 +95,6 @@ if ($posicao == 'form') {
         return $response->back();
     }
 
-    xdebug_break();
-
     $session->set('credentials', array(
         'default' => $usuario['usu_login'],
         'name'    => $usuario['usu_nome']

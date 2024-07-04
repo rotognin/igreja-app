@@ -10,7 +10,6 @@ use Funcoes\Layout\Table;
 require_once("header.php");
 
 $posicao = $request->get('posicao', 'lista');
-//xdebug_break();
 
 $menuDAO = new Menu();
 

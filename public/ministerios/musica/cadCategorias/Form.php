@@ -73,7 +73,7 @@ class Form extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">Cadastro de Categorias de Músicas</h1>',
+            '<h1 class="m-0 text-dark">Cadastro de Categoria de Músicas</h1>',
             L::linkbutton('Voltar', 'categorias.php', 'Voltar', 'fas fa-angle-left')
         );
     }

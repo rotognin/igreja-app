@@ -1,19 +1,17 @@
 <?php
 
-namespace View\Ministerios\Musica\Musica;
+namespace View\Ministerios\Musica\Grupo;
 
 use Funcoes\Layout\Layout as L;
 use Funcoes\Layout\Form as Formulario;
 use Funcoes\Layout\FormControls as FC;
-use App\MINISTERIOS\MUSICA\DAO\Musicas;
-use App\MINISTERIOS\MUSICA\DAO\Categorias;
+use App\MINISTERIOS\MUSICA\DAO\Grupos;
 use Funcoes\Lib\GlobalHelper;
 
 class Form extends GlobalHelper
 {
-    private Musicas $musicasDAO;
-    private Categorias $categoriasDAO;
-    private array $aMusica = [];
+    private Grupos $gruposDAO;
+    private array $aGrupo = [];
     private string $cabecalho;
     private Formulario $form;
     private bool $novo = true;
@@ -42,8 +40,7 @@ class Form extends GlobalHelper
 
     private function iniciarDAO()
     {
-        $this->musicasDAO = new Musicas();
-        $this->categoriasDAO = new Categorias();
+        $this->gruposDAO = new Grupos();
     }
 
     private function existeRetorno(): bool
@@ -51,7 +48,7 @@ class Form extends GlobalHelper
         $existeRetorno = false;
 
         if ($this->session->check('previous')) {
-            $this->aMusica = $this->session->get('previous');
+            $this->aGrupo = $this->session->get('previous');
             $existeRetorno = true;
         }
 
@@ -60,13 +57,13 @@ class Form extends GlobalHelper
 
     private function checarID()
     {
-        $mus_id = $this->request->get('mus_id', 0);
+        $gru_id = $this->request->get('gru_id', 0);
 
-        if ($mus_id > 0) {
-            $this->aMusica = $this->musicasDAO->get($mus_id);
+        if ($gru_id > 0) {
+            $this->aGrupo = $this->gruposDAO->get($gru_id);
             $this->novo = false;
 
-            if (empty($this->aMusica)) {
+            if (empty($this->aGrupo)) {
                 $this->session->flash('error', 'Registro não encontrado');
                 return $this->response->back();
             }
@@ -76,70 +73,67 @@ class Form extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">Cadastro de Música</h1>',
-            L::linkbutton('Voltar', 'musicas.php', 'Voltar', 'fas fa-angle-left')
+            '<h1 class="m-0 text-dark">Cadastro de Grupo</h1>',
+            L::linkbutton('Voltar', 'grupos.php', 'Voltar', 'fas fa-angle-left')
         );
     }
 
     private function inicioForm()
     {
         $this->form = new Formulario();
-        $this->form->setTitle($this->novo ? 'Nova Música' : 'Editar Música'  . ": {$this->aMusica['mus_id']} - {$this->aMusica['mus_nome']}");
-        $this->form->setForm('id="form-musicas" action="?posicao=salvar" method="post"');
+        $this->form->setTitle($this->novo ? 'Novo Grupo' : 'Editar Grupo'  . ": {$this->aGrupo['gru_id']} - {$this->aGrupo['gru_nome']}");
+        $this->form->setForm('id="form-grupos" action="?posicao=salvar" method="post"');
     }
 
     private function montarCampos()
     {
         if (!$this->novo) {
-            $this->form->addHidden(FC::hidden('mus_id', $this->aMusica['mus_id']));
+            $this->form->addHidden(FC::hidden('gru_id', $this->aGrupo['gru_id']));
         }
 
         $this->form->addHidden(FC::hidden('novo', ($this->novo) ? 'S' : 'N'));
 
         $campo_nome = FC::input(
             'Nome',
-            'mus_nome',
-            $this->aMusica['mus_nome'] ?? '',
+            'gru_nome',
+            $this->aGrupo['gru_nome'] ?? '',
             [
-                'div_class' => 'col-md-4',
+                'div_class' => 'col-md-5',
                 'class' => 'form-control form-control-sm',
                 'autofocus' => 'autofocus'
             ]
         );
 
-        $campo_artista = FC::input(
-            'Artista',
-            'mus_artista',
-            $this->aMusica['mus_artista'] ?? '',
+        $campo_sigla = FC::input(
+            'Sigla',
+            'gru_sigla',
+            $this->aGrupo['gru_sigla'] ?? '',
             [
-                'div_class' => 'col-md-3',
+                'div_class' => 'col-md-1',
                 'class' => 'form-control form-control-sm'
             ]
         );
 
-        $campo_categoria = FC::select('Categoria', 'mus_categoria_id', $this->categoriasDAO->montarArray(), $this->aMusica['mus_categoria_id'] ?? '', [
-            'div_class' => 'col-md-3',
-            'class' => 'form-control form-control-sm'
-        ]);
-
-        $campo_link = FC::input(
-            'Link',
-            'mus_link',
-            $this->aMusica['mus_link'] ?? '',
+        $campo_observacoes = FC::textarea(
+            'Observações',
+            'gru_observacoes',
+            $this->aGrupo['gru_observacoes'] ?? '',
             [
-                'div_class' => 'col-md-6',
-                'class' => 'form-control form-control-sm'
+                'div_class' => 'col-md-8',
+                'class' => 'form-control form-control-sm',
+                'rows' => '3'
             ]
         );
 
-        $campo_situacao = FC::select('Situação', 'mus_situacao', $this->musicasDAO->getSituacao(), $this->aMusica['mus_situacao'] ?? 'A', [
+        $campo_situacao = FC::select('Situação', 'gru_situacao', $this->gruposDAO->getSituacao(), $this->aGrupo['gru_situacao'] ?? 'A', [
             'div_class' => 'col-md-1',
             'class' => 'form-control form-control-sm'
         ]);
 
         $this->form->setFields([
-            ['<div class="row">' . $campo_nome . $campo_artista . $campo_categoria . '</div>'],
-            ['<div class="row">' . $campo_link . $campo_situacao . '</div>']
+            ['<div class="row">' . $campo_nome . $campo_sigla . '</div>'],
+            ['<div class="row">' . $campo_observacoes . '</div>'],
+            ['<div class="row">' . $campo_situacao . '</div>']
         ]);
 
         $this->form->setActions(L::submit('Salvar'));
@@ -148,7 +142,7 @@ class Form extends GlobalHelper
     private function montarMensagens()
     {
         $this->aMensagens = array(
-            'mus_nome' => 'Informe o Nome'
+            'gru_nome' => 'Informe o Nome'
         );
     }
 
@@ -157,15 +151,15 @@ class Form extends GlobalHelper
         $this->script = <<<HTML
             <script>
                 $(function(){
-                    $('#form-musicas').validate({
+                    $('#form-grupos').validate({
                         rules: {
-                            mus_nome: {
+                            gru_nome: {
                                 required: true
                             }
                         },
                         messages: {
-                            mus_nome: {
-                                required: '{$this->aMensagens["mus_nome"]}'
+                            gru_nome: {
+                                required: '{$this->aMensagens["gru_nome"]}'
                             }
                         },
                         invalidHandler: function(form, validator){
@@ -189,7 +183,7 @@ class Form extends GlobalHelper
                 </div>
                 {$this->script}
             HTML,
-            ['title' => 'Cadastro de Música']
+            ['title' => 'Cadastro de Grupo']
         );
     }
 }

@@ -4,7 +4,7 @@ require_once("header.php");
 
 $classe = ucfirst($request->get('posicao', 'lista'));
 
-$arquivo = 'cadCategorias/' . $classe . '.php';
+$arquivo = 'cadGrupos/' . $classe . '.php';
 
 if (!file_exists($arquivo)) {
     $session->flash('error', 'Arquivo não encontrado: ' . $arquivo);
@@ -13,7 +13,7 @@ if (!file_exists($arquivo)) {
 
 require_once($arquivo);
 
-$classe = 'View\\Ministerios\\Musica\\Categoria\\' . $classe;
+$classe = 'View\\Ministerios\\Musica\\Grupo\\' . $classe;
 
 $obj = new $classe();
 $obj->executar();
