@@ -22,6 +22,7 @@ class FormControls
         $add_label = (isset($attrs['add_label'])) ? '&nbsp;&nbsp;&nbsp;' . $attrs['add_label'] : '';
         $label_class = (isset($attrs['label_class'])) ? 'class="' . $attrs['label_class'] . '"' : '';
         $prop = $attrs['prop'] ?? '';
+        $has_label = $attrs['has_label'] ?? true;
 
         unset($attrs['id']);
         unset($attrs['type']);
@@ -32,11 +33,18 @@ class FormControls
         unset($attrs['add_label']);
         unset($attrs['label_class']);
         unset($attrs['prop']);
+        unset($attrs['has_label']);
+
+        $label_for = '';
+
+        if ($has_label) {
+            $label_for = "<label for='$id' $label_class>$label</label>$add_label";
+        }
 
         $attrs = HTML::attrs($attrs);
         return <<<HTML
         <div class="form-group $div_class">
-            <label for="$id" $label_class>$label</label>$add_label
+            $label_for
             <input type="$type" name="$name" value="$value" id="$id" class="$class" $style $attrs $event $prop/>
         </div>
         HTML;
