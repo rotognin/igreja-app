@@ -431,3 +431,24 @@ function inicioMenor(menor, maior) {
 
     return (dataMenor <= dataMaior);
 }
+
+// Validação de Hora
+function horaValida(hora, vazio = false) {
+    if (hora == '') {
+        return vazio;
+    }
+
+    var aHora = hora.split(":");
+    if (aHora.length != 2) {
+        return false;
+    }
+
+    var hh = parseInt(aHora[0]);
+    var mm = parseInt(aHora[1]);
+
+    if (hh > 23 || mm > 59) {
+        return false;
+    }
+
+    return true;
+}

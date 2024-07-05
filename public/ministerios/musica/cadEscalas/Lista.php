@@ -1,10 +1,10 @@
 <?php
 
-namespace View\Ministerios\Musica\Grupo;
+namespace View\Ministerios\Musica\Escala;
 
 use Funcoes\Layout\Layout as L;
-use App\MINISTERIOS\MUSICA\Datatables\DatatableGrupos;
-use App\MINISTERIOS\MUSICA\DAO\Grupos;
+use App\MINISTERIOS\MUSICA\Datatables\DatatableEscalas;
+use App\MINISTERIOS\MUSICA\DAO\Escalas;
 use Funcoes\Layout\Form;
 use Funcoes\Layout\FormControls as FC;
 use Funcoes\Layout\Datatable;
@@ -15,7 +15,7 @@ class Lista extends GlobalHelper
     private string $cabecalho;
     private Form $formFiltros;
     private Datatable $table;
-    private Grupos $gruposDAO;
+    private Escalas $escalasDAO;
     private string $script;
 
     public function __construct()
@@ -36,14 +36,14 @@ class Lista extends GlobalHelper
 
     private function iniciarDAO()
     {
-        $this->gruposDAO = new Grupos();
+        $this->escalasDAO = new Escalas();
     }
 
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">Grupos</h1>',
-            L::linkButton('Novo Grupo', '?posicao=form', '', 'fas fa-plus', 'primary')
+            '<h1 class="m-0 text-dark">Escalas</h1>',
+            L::linkButton('Nova Escala', '?posicao=form', '', 'fas fa-plus', 'primary')
         );
     }
 
@@ -59,29 +59,38 @@ class Lista extends GlobalHelper
 
     private function montarCamposFiltros()
     {
-        $filtro_nome = FC::input('Nome', 'gru_nome', $this->request->get('gru_nome'), [
+        $filtro_titulo = FC::input('Título', 'esc_titulo', $this->request->get('esc_titulo'), [
             'div_class' => 'col-md-4',
             'style' => 'text-transform:uppercase',
             'class' => 'form-control form-control-sm'
         ]);
 
-        $filtro_situacao = FC::select('Situação', 'gru_situacao', ['T' => 'Todas'] + $this->gruposDAO->getSituacao(), $this->request->get('gru_situacao', 'T'), [
+        $filtro_situacao = FC::select('Situação', 'esc_situacao', ['T' => 'Todas'] + $this->escalasDAO->getSituacao(), $this->request->get('esc_situacao', 'T'), [
             'div_class' => 'col-md-2',
             'class' => 'form-control form-control-sm'
         ]);
 
+        $filtro_data_inicial = FC::input('Data inicial', 'esc_data_ini', $this->request->get('esc_data_ini', ''), [
+            'class' => 'form-control form-control-sm data-mask', 'div_class' => 'col-md-2'
+        ]);
+
+        $filtro_data_final = FC::input('Data final', 'esc_data_fim', $this->request->get('esc_data_fim', ''), [
+            'class' => 'form-control form-control-sm data-mask', 'div_class' => 'col-md-2'
+        ]);
+
         $this->formFiltros->setFields([
-            ['<div class="row">' . $filtro_nome . $filtro_situacao . '</div>']
+            ['<div class="row">' . $filtro_titulo . $filtro_situacao . '</div>'],
+            ['<div class="row">' . $filtro_data_inicial . $filtro_data_final . '</div>']
         ]);
     }
 
     private function montarTabela()
     {
-        $this->table = new Datatable(DatatableGrupos::class);
+        $this->table = new Datatable(DatatableEscalas::class);
 
         if (count($this->request->getArray()) == 0) {
             $this->table->addFilters([
-                'gru_situacao' => 'T'
+                'esc_situacao' => 'T'
             ]);
         }
     }
@@ -90,10 +99,12 @@ class Lista extends GlobalHelper
     {
         $this->script = <<<HTML
             <script>
-                function excluir(gru_id){
-                    confirm('Deseja realmente excluir este Grupo?').then(result => {
+                $('.data-mask').mask('00/00/0000');
+
+                function excluir(esc_id){
+                    confirm('Deseja realmente excluir esta Escala?').then(result => {
                         if (result.isConfirmed) {
-                            window.location.href = '?posicao=excluir&gru_id=' + gru_id;
+                            window.location.href = '?posicao=excluir&esc_id=' + esc_id;
                         }
                     });
                 }
@@ -114,7 +125,7 @@ class Lista extends GlobalHelper
                 </div>
                 {$this->script}
             HTML,
-            ['title' => 'Cadastro de Grupos']
+            ['title' => 'Cadastro de Escalas']
         );
     }
 }
