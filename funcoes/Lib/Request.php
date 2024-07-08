@@ -4,19 +4,20 @@ namespace Funcoes\Lib;
 
 class Request
 {
-    private array $get, $post, $server, $headers;
+    private array $get, $post, $server, $files, $headers;
 
     public function __construct()
     {
         $this->get = $_GET ?? [];
         $this->post = $_POST ?? [];
+        $this->files = $_FILES ?? [];
         $this->server = $_SERVER ?? [];
         $this->headers = [];
         if ($headers = apache_request_headers()) {
             $this->headers = $headers;
         }
 
-        unset($_POST, $_GET, $_SERVER);
+        unset($_POST, $_GET, $_FILES, $_SERVER);
     }
 
     public function getArray(int $filter = FILTER_DEFAULT): array
@@ -53,5 +54,15 @@ class Request
     public function server($key, $default = "")
     {
         return $this->server[$key] ?? $default;
+    }
+
+    public function file($key)
+    {
+        return $this->files[$key] ?? [];
+    }
+
+    public function filesArray()
+    {
+        return $this->files;
     }
 }

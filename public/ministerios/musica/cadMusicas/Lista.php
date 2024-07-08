@@ -73,7 +73,10 @@ class Lista extends GlobalHelper
             'class' => 'form-control form-control-sm'
         ]);
 
-        $filtro_categoria = FC::select('Categoria', 'mus_categoria_id', $this->categoriaDAO->montarArray(['T' => 'Todas']));
+        $filtro_categoria = FC::select('Categoria', 'mus_categoria_id', $this->categoriaDAO->montarArray(['T' => 'Todas']), $this->request->get('mus_categoria_id', 'T'), [
+            'div_class' => 'col-md-2',
+            'class' => 'form-control form-control-sm'
+        ]);
 
         $this->formFiltros->setFields([
             ['<div class="row">' . $filtro_nome . $filtro_situacao . $filtro_categoria . '</div>']
@@ -109,6 +112,7 @@ class Lista extends GlobalHelper
                 {$this->cabecalho}
                 <div class="content">
                     <div class="container-fluid pb-1">
+                        {$this->formFiltros->html()}
                         {$this->table->html()}
                     </div>
                 </div>
