@@ -54,7 +54,7 @@ class Anexos extends GlobalHelper
     private function montarCabecalho()
     {
         $this->cabecalho = L::pageTitle(
-            '<h1 class="m-0 text-dark">Anexos da Mùsica</h1>',
+            '<h1 class="m-0 text-dark">Anexos da Música</h1>',
             L::backButton()
         );
     }
@@ -154,7 +154,7 @@ class Anexos extends GlobalHelper
                 function excluir(mua_id){
                     confirm('Deseja realmente excluir este Anexo?').then(result => {
                         if (result.isConfirmed) {
-                            window.location.href = '?posicao=excluir&mua_id=' + mua_id;
+                            window.location.href = '?posicao=excluir&mua_id=' + mua_id + '&mus_id=' + {$this->mus_id};
                         }
                     });
                 }

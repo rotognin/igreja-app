@@ -9,3 +9,4 @@ public/uploads/
 /public/teste/
 /public/temp/
 phinx.php
+composer.lock

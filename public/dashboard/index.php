@@ -8,7 +8,7 @@ require_once('header.php');
 $usuario = $session->get('credentials.default');
 
 $pageHeader = Layout::pageTitle(
-    '<h1 class="m-0 text-dark">' . _('Bem vindo ao Dashboard') . ', ' . $activeUser->data['usu_nome'] . '</h1>'
+    '<h1 class="m-0 text-dark">Bem vindo ao Dashboard, ' . $activeUser->data['usu_nome'] . '</h1>'
 );
 
 // Buscar últimos programas e programas mais acessados do usuário logado

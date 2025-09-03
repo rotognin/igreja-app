@@ -98,4 +98,12 @@ class MusicaAnexos extends DAO
         $stmt->execute($args);
         return $stmt->rowCount();
     }
+
+    public function delete($mua_id)
+    {
+        $sql = "DELETE FROM {$this->table('igreja_db', 'musica_anexos')} WHERE mua_id = ?";
+        $stmt = $this->default->prepare($sql);
+        $stmt->execute([$mua_id]);
+        return $stmt->rowCount();
+    }
 }
